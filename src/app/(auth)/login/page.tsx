@@ -57,9 +57,9 @@ export default function LoginPage() {
 
       // Redirect Logic
       if (userData?.is_admin) {
-        router.push("/dashboard");
+        router.push("/cms/dashboard");
       } else {
-        router.push("/dashboard");
+        router.push("/cms/dashboard");
       }
       router.refresh();
       
