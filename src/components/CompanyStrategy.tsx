@@ -137,7 +137,7 @@ export default function CompanyStrategy() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-12 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+    <section className="max-w-7xl mx-auto px-3 md:px-12 pb-12 grid grid-cols-1 lg:grid-cols-2  md:gap-12 items-start">
       {/* Left side: Tabs and Content */}
       <div className="min-h-[450]">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-6">

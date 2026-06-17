@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import TopNavbar from "@/components/TopNavbar";
+import TopBar from "@/components/TopBar";
+
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,7 +11,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   return (
     <>
-     <TopNavbar/>
+     <TopBar/>
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
        <Navbar />
       </header>
