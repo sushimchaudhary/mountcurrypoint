@@ -150,6 +150,9 @@ export default function GalleryForm({
                         <span className="text-[11px] font-bold uppercase">
                           Click to upload image
                         </span>
+                        <p className="text-[11px] text-gray-400 mt-2 font-bold uppercase">
+                          Gallery image (Max 5MB)
+                        </p>
                       </div>
                     )}
                   </div>
@@ -160,9 +163,7 @@ export default function GalleryForm({
                     accept="image/*"
                     onChange={handleFileChange}
                   />
-                  <p className="text-[11px] text-gray-400 mt-1 font-bold uppercase">
-                    Gallery Image (Max 10MB)
-                  </p>
+                  
                 </div>
                 {/* Title */}
                 <Controller

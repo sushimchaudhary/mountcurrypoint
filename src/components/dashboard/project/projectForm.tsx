@@ -126,6 +126,9 @@ export function ProjectForm({ initialData, onSuccess, onClose, isOpen }: any) {
                         <span className="text-[11px] font-bold uppercase">
                           Click to upload image
                         </span>
+                        <p className="text-[11px] text-gray-400 mt-2 font-bold uppercase">
+                          Project image (Max 5MB)
+                        </p>
                       </div>
                     )}
                   </div>

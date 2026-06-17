@@ -20,6 +20,15 @@ import { CompanyOverviewServices } from "@/services/companyoverviewServices";
 import { Image as AntImage } from "antd";
 
 const PAGE_SIZE = 20;
+
+
+// ── Strip HTML tags → plain text for table preview ────────────────────────────
+function stripHtml(html: string): string {
+  if (!html) return "";
+  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+
 export default function CompanyOverviewTable({
   onEdit,
   refreshTrigger,
@@ -197,7 +206,7 @@ export default function CompanyOverviewTable({
                       </td>
                       <td className="px-4 py-1.5">
                         <span className="text-[10px] text-[#8094ae] line-clamp-2 max-w-sm">
-                          {item.description}
+                          {stripHtml(item.description)}
                         </span>
                       </td>
                       <td className="px-4 py-1.5 text-right">

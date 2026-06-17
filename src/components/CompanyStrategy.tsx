@@ -1,148 +1,98 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, Target,  Trophy, Star } from "lucide-react";
+import { Eye, Target, Trophy, Star } from "lucide-react";
+import { StrategyServices } from "@/services/strategyServices";
 
+interface Strategy {
+  id: number;
+  objective: string;
+  mission_statement: string;
+  management: string;
+  goals: string;
+  image: string;
+}
+
+// ── Skeleton ──────────────────────────────────────────────────────────────────
+function StrategySkeleton() {
+  return (
+    <section className="max-w-7xl mx-auto px-3 md:px-12 pb-12 grid grid-cols-1 lg:grid-cols-2 md:gap-12 items-start animate-pulse">
+      <div className="min-h-[450px]">
+        {/* Title */}
+        <div className="h-8 w-52 bg-gray-200 rounded-full mb-6" />
+        {/* Tab buttons */}
+        <div className="flex flex-wrap gap-2 mb-6 border-b pb-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-9 w-28 bg-gray-200 rounded-md" />
+          ))}
+        </div>
+        {/* Content lines */}
+        <div className="space-y-3 mt-4">
+          <div className="h-6 w-40 bg-gray-200 rounded-full" />
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className={`h-3 bg-gray-200 rounded-full ${
+                i === 4 ? "w-2/3" : "w-full"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+      {/* Image skeleton */}
+      <div className="flex justify-center items-start mt-10">
+        <div className="relative w-full max-w-md aspect-square bg-gray-200 rounded-xl" />
+      </div>
+    </section>
+  );
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
 export default function CompanyStrategy() {
   const [activeTab, setActiveTab] = useState("Mission");
+  const [strategy, setStrategy] = useState<Strategy | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    StrategyServices.getDetails()
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        setStrategy(list[0] ?? null);
+      })
+      .catch(() => setStrategy(null))
+      .finally(() => setLoading(false));
+  }, []);
 
   const tabs = [
-    { name: "Mission", icon: <Eye size={18} /> },
-    { name: "Goals", icon: <Target size={18} /> },
-    { name: "Management", icon: <Star size={18} /> },
-    { name: "Objective", icon: <Trophy size={18} /> },
-  ];
+    { name: "Mission",   icon: <Eye    size={18} />, field: "mission_statement" },
+    { name: "Goals",     icon: <Target size={18} />, field: "goals"             },
+    { name: "Management",icon: <Star   size={18} />, field: "management"        },
+    { name: "Objective", icon: <Trophy size={18} />, field: "objective"         },
+  ] as const;
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "Mission":
-        return (
-          <>
-            <h3 className="text-2xl font-bold text-blue-950 mb-4">Mission</h3>
-            <p className="font-bold text-gray-700 italic mb-4">
-              “To deliver diverse, high-quality services across multiple sectors
-              with integrity, innovation, and a customer-first approach—building
-              a trusted brand that enhances lives and connects communities
-              through excellence.”
-            </p>
-            <p className="text-gray-600">
-              Aryatara's mission is to create a meaningful and lasting impact
-              through every service offered, be it through a warm plate of food
-              at <em>Mount Curry Point</em>, a cutting-edge solution from{" "}
-              <em>Webkha</em>, or a reliable ride through its automotive
-              ventures.
-            </p>
-          </>
-        );
-        case "Goals":
-        return (
-            <>
-            <h3 className="text-2xl font-bold text-blue-950 mb-4">Goals</h3>
-            <ul className="space-y-6">
-                {/* Short-Term Goals */}
-                <li>
-                <h4 className="font-bold text-blue-900 mb-2">Short-Term Goals (1–2 years):</h4>
-                <ul className="list-disc ml-5 space-y-1 text-gray-600">
-                    <li>Launch and solidify operations of Mount Curry Point (restaurant services) and Webkha (IT solutions).</li>
-                    <li>Establish a brand identity that reflects Aryatara's multi-service capabilities.</li>
-                    <li>Build partnerships and client networks within Japan.</li>
-                </ul>
-                </li>
+  if (loading) return <StrategySkeleton />;
+  if (!strategy) return null;
 
-                {/* Mid-Term Goals */}
-                <li>
-                <h4 className="font-bold text-blue-900 mb-2">Mid-Term Goals (3–5 years):</h4>
-                <ul className="list-disc ml-5 space-y-1 text-gray-600">
-                    <li>Expand the Mount Curry Point brand to multiple locations.</li>
-                    <li>Position Webkha as a competitive IT firm in the Asia-Pacific region.</li>
-                    <li>Introduce Aryatara’s automobile-related services (car rental, repair, or sales).</li>
-                    <li>Develop an integrated service model combining hospitality, IT, and logistics.</li>
-                </ul>
-                </li>
-
-                {/* Long-Term Goals */}
-                <li>
-                <h4 className="font-bold text-blue-900 mb-2">Long-Term Goals (5+ years):</h4>
-                <ul className="list-disc ml-5 space-y-1 text-gray-600">
-                    <li>Become a recognized regional conglomerate in Asia offering diverse, reliable, and tech-enhanced services.</li>
-                    <li>Diversify further into sectors such as travel, education, and digital commerce.</li>
-                    <li>Achieve sustainable growth and be known for innovation, ethics, and community value.</li>
-                </ul>
-                </li>
-            </ul>
-            </>
-        );
-
-        case "Management":
-        return (
-            <>
-            <h3 className="text-2xl font-bold text-blue-950 mb-4">Management</h3>
-            <p className="text-gray-600 mb-4">
-                Aryatara Private Limited is led by a passionate and visionary management team committed 
-                to driving innovation, operational excellence, and long-term impact. The leadership 
-                brings together professionals with diverse expertise across business development, IT, 
-                hospitality, finance, and strategy. The company follows a <b> decentralized management structure, </b>
-                empowering each subsidiary brand —like <i> Mount Curry Point </i> and <i> Webkha </i> —to operate independently 
-                while aligning with Aryatara’s core mission and values.
-            </p>
-            
-            <h4 className="font-bold text-blue-900 mb-2">Key management principles include:</h4>
-            <ul className="list-disc ml-5 text-gray-600">
-                <li>Transparent and ethical governance</li>
-                <li>Empowerment of individual teams and local leadership</li>
-                <li>Data-driven decision-making</li>
-                <li>Customer satisfaction as a core performance metric</li>
-                <li>Sustainable and inclusive growth</li>
-            </ul>
-            </>
-        );
-      
-        case "Objective":
-        return (
-          <>
-            <h3 className="text-2xl font-bold text-blue-950 mb-4">Objective</h3>
-            <ul className="list-disc ml-5 space-y-2 text-gray-600">
-              <li>
-                <b>To establish a strong multi-sector presence </b> under the Aryatara
-                brand by providing high-quality, reliable services in the fields
-                of hospitality, information technology, automobile services, and
-                beyond.
-              </li>
-              <li>
-                <b>To nurture and grow subsidiary brands </b> such as <i>Mount Curry Point</i>
-                and Webkha into leading names in their respective industries.
-              </li>
-              <li>
-                <b>To expand service reach both locally and internationally, </b>
-                starting from Japan and growing into other Asian and global
-                markets.
-              </li>
-              <li>
-                <b>To foster innovation and technology-driven solutions </b> in every
-                sector we serve, ensuring efficiency and modernity in service
-                delivery.
-              </li>
-              <li>
-                <b>To create employment opportunities </b> and support local economies
-                by investing in talent development, infrastructure, and ethical
-                business practices.
-              </li>
-            </ul>
-          </>
-        );
-      default:
-        return null;
-    }
+  // Map tab name → strategy field
+  const activeContent: Record<string, string> = {
+    Mission:    strategy.mission_statement,
+    Goals:      strategy.goals,
+    Management: strategy.management,
+    Objective:  strategy.objective,
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-3 md:px-12 pb-12 grid grid-cols-1 lg:grid-cols-2  md:gap-12 items-start">
-      {/* Left side: Tabs and Content */}
-      <div className="min-h-[450]">
+    <section className="max-w-7xl mx-auto px-3 md:px-12 pb-12 grid grid-cols-1 lg:grid-cols-2 md:gap-12 items-start">
+
+      {/* ── Left: Tabs + content ── */}
+      <div className="min-h-[450px]">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-6">
           Company Strategy
         </h2>
+
+        {/* Tab buttons — identical to original */}
         <div className="flex flex-wrap gap-2 mb-6 border-b pb-4">
           {tabs.map((tab) => (
             <button
@@ -158,6 +108,8 @@ export default function CompanyStrategy() {
             </button>
           ))}
         </div>
+
+        {/* Animated content panel */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -166,18 +118,41 @@ export default function CompanyStrategy() {
             exit={{ opacity: 0, x: 10 }}
             transition={{ duration: 0.3 }}
           >
-            {renderContent()}
+            {/* Title */}
+            <h3 className="text-2xl font-bold text-blue-950 mb-4">
+              {activeTab}
+            </h3>
+
+            {/* Render CKEditor HTML safely */}
+            <div
+              className="
+                prose prose-sm max-w-none text-gray-600
+                [&_p]:mb-3 [&_p]:leading-relaxed
+                [&_ul]:list-disc [&_ul]:ml-5 [&_ul]:space-y-1
+                [&_ol]:list-decimal [&_ol]:ml-5 [&_ol]:space-y-1
+                [&_li]:text-gray-600
+                [&_h4]:font-bold [&_h4]:text-blue-900 [&_h4]:mb-2 [&_h4]:mt-4
+                [&_b]:text-gray-800
+                [&_i]:italic
+                [&_strong]:text-gray-800
+                [&_em]:italic
+              "
+              dangerouslySetInnerHTML={{
+                __html: activeContent[activeTab] ?? "",
+              }}
+            />
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Right side: Image */}
-      <div className="flex justify-center items-start mt-10">
+      {/* ── Right: Image from API ── */}
+      <div className="flex justify-center items-start mt-12">
         <div className="relative w-full max-w-md aspect-square">
           <Image
-            src="/image/A_1.png"
-            alt="Company Logo"
+            src={strategy.image || "/image/A_1.png"}
+            alt="Company Strategy"
             fill
+            unoptimized
             className="object-contain rounded-xl"
           />
         </div>
