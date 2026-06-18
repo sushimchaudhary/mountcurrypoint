@@ -4,9 +4,19 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
-  Briefcase, Clock, Loader2, Inbox, X,
-  User, Mail, Phone, MapPin, FileText,
-  Upload, Send, CheckCircle2,
+  Briefcase,
+  Clock,
+  Loader2,
+  Inbox,
+  X,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  FileText,
+  Upload,
+  Send,
+  CheckCircle2,
 } from "lucide-react";
 import { format } from "date-fns";
 import { JobServices, JobApplicationServices } from "@/services/jobServices";
@@ -30,11 +40,13 @@ interface ApplicationForm {
   short_description: string;
 }
 
-
 // ── Strip HTML tags → plain text for table preview ────────────────────────────
 function stripHtml(html: string): string {
   if (!html) return "";
-  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 function JobSkeleton() {
@@ -72,11 +84,12 @@ function JobCard({
   onApply: (job: Job) => void;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 28 }}
+<motion.div
+      // यहाँ ProjectCard सँग मिल्दो एनिमेसन सेट गरिएको छ
+      initial={{ opacity: 0, y: 30 }} 
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.45, delay: index * 0.08 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.5, delay: index * 0.08 }}
       className="group bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col"
     >
       <div className="h-1 w-full bg-gradient-to-r from-green-500 to-emerald-400" />
@@ -104,8 +117,8 @@ function JobCard({
         </div>
 
         <p className="text-[13px] text-gray-500 leading-relaxed line-clamp-3 flex-1">
-         <div
-  className="
+          <div
+            className="
     prose prose-sm max-w-none text-justify
     [&_p]:mb-3 [&_p]:leading-relaxed [&_p]:text-[15px] [&_p]:text-gray-600
     [&_ul]:list-disc [&_ul]:ml-5 [&_ul]:space-y-1
@@ -115,8 +128,8 @@ function JobCard({
     [&_b]:text-gray-800 [&_strong]:text-gray-800
     [&_i]:italic [&_em]:italic
   "
-  dangerouslySetInnerHTML={{ __html: job.description ?? "" }}
-/>
+            dangerouslySetInnerHTML={{ __html: job.description ?? "" }}
+          />
         </p>
 
         <div className="border-t border-gray-50" />
@@ -207,28 +220,26 @@ function ApplicationModal({
 
       await JobApplicationServices.submitApplication(fd);
       setSubmitted(true);
-} catch (err: any) {
-  console.error("Submission Error:", err); 
+    } catch (err: any) {
+      console.error("Submission Error:", err);
 
-  const data = err?.response?.data;
-  
-  if (data) {
-    if (typeof data === "object" && !Array.isArray(data)) {
-      const messages = Object.entries(data)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join(", ");
-      setError(messages);
-    } 
-    else if (typeof data === "string") {
-      setError(data);
-    }
-    else {
-      setError("An unexpected error occurred. Please try again.");
-    }
-  } else {
-    setError("Connection error. Please check your internet.");
-  }
-} finally {
+      const data = err?.response?.data;
+
+      if (data) {
+        if (typeof data === "object" && !Array.isArray(data)) {
+          const messages = Object.entries(data)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(", ");
+          setError(messages);
+        } else if (typeof data === "string") {
+          setError(data);
+        } else {
+          setError("An unexpected error occurred. Please try again.");
+        }
+      } else {
+        setError("Connection error. Please check your internet.");
+      }
+    } finally {
       setSubmitting(false);
     }
   }
@@ -301,8 +312,8 @@ function ApplicationModal({
                     Application Submitted!
                   </h4>
                   <p className="text-sm text-gray-500">
-                    Thank you for applying for{" "}
-                    <strong>{job.name}</strong>. We'll be in touch soon.
+                    Thank you for applying for <strong>{job.name}</strong>.
+                    We'll be in touch soon.
                   </p>
                 </div>
                 <button
@@ -360,15 +371,17 @@ function ApplicationModal({
                         <Phone size={11} /> Contact *
                       </label>
                       <input
-                        type="text" 
+                        type="text"
                         {...register("contact", {
                           required: "Contact is required",
                           pattern: {
-                            value: /^[0-9]{10}$/, 
+                            value: /^[0-9]{10}$/,
                             message: "Contact must be exactly 10 digits",
                           },
                           onChange: (e) => {
-                            e.target.value = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+                            e.target.value = e.target.value
+                              .replace(/[^0-9]/g, "")
+                              .slice(0, 10);
                           },
                         })}
                         placeholder="98XXXXXXXX"
@@ -407,13 +420,15 @@ function ApplicationModal({
                         cvError
                           ? "border-red-300 hover:border-red-400"
                           : cvFile
-                          ? "border-green-400 bg-green-50"
-                          : "border-gray-200 hover:border-green-400"
+                            ? "border-green-400 bg-green-50"
+                            : "border-gray-200 hover:border-green-400"
                       }`}
                     >
                       <div
                         className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                          cvFile ? "bg-green-100" : "bg-green-50 group-hover:bg-green-100"
+                          cvFile
+                            ? "bg-green-100"
+                            : "bg-green-50 group-hover:bg-green-100"
                         }`}
                       >
                         {cvFile ? (
@@ -529,7 +544,6 @@ export default function CareerPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-     
       <section className="md:px-12 px-4 py-14">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -547,7 +561,8 @@ export default function CareerPage() {
           <div className="mt-3 w-14 h-1 bg-green-500 rounded-full" />
           {!loading && (
             <p className="mt-2 text-sm text-gray-400">
-              {jobs.length} position{jobs.length !== 1 ? "s" : ""} currently open
+              {jobs.length} position{jobs.length !== 1 ? "s" : ""} currently
+              open
             </p>
           )}
         </motion.div>

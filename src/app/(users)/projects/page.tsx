@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import ProjectCard from "@/components/ProjectCard";
 import { ProjectsServices } from "@/services/projectsServices";
