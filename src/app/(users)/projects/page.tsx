@@ -52,17 +52,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* ── Hero Banner ── */}
-      <section className="py-16 bg-gray-800 text-white text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Projects</h1>
-        <div className="flex items-center justify-center gap-2 text-sm md:text-base">
-          <Link href="/" className="hover:text-green-400 cursor-pointer">
-            Home
-          </Link>
-          <span>/</span>
-          <span className="text-green-500 font-semibold">Projects</span>
-        </div>
-      </section>
+     
 
       {/* ── Main Content ── */}
       <section className="md:px-12 px-4 py-12">

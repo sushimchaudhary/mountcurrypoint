@@ -43,7 +43,7 @@ export default function Footer() {
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full  mx-auto">
       <footer className="bg-[#007f35] text-white pt-16 pb-8 px-4 md:px-12">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div className="space-y-4">
