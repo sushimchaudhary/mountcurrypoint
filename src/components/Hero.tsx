@@ -34,7 +34,7 @@ export default function HeroBanner() {
   }, [sliders.length]);
 
   return (
-    <section className="relative w-full max-w-8xl mx-auto overflow-hidden bg-[#060a06] md:min-h-[500] min-h-[270] flex items-center shadow-2xl">
+    <section className="relative w-full max-w-8xl mx-auto overflow-hidden bg-[#060a06] md:min-h-[500] min-h-[470] flex items-center shadow-2xl">
       
       {/* ── Background Image Slider (सिर्फ इमेज मात्र स्लाइड हुन्छ) ── */}
       <div className="absolute inset-0 z-0">
@@ -56,7 +56,7 @@ export default function HeroBanner() {
                   priority
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-[#060a06]/50" />
+                <div className="absolute inset-0 bg-[#060a06]/60" />
               </motion.div>
             )
           ))}

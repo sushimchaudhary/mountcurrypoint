@@ -49,7 +49,7 @@ export default function TopBar() {
         {/* Address */}
         <span className="flex items-center gap-1 shrink-0">
           <MapPin className="w-3 h-3" />
-          {organization?.address ?? "Indrasarowar-5, Makawanpur, Nepal"}
+          {organization?.address ?? "email"}
         </span>
 
         {[organization?.email1, organization?.email2].filter(Boolean).map((email, index) => (

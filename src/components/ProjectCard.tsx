@@ -44,13 +44,13 @@ export default function ProjectCard({
       </div>
 
       {/* Content */}
-<div className="p-4 flex flex-col h-32">
-  <h3 className="text-xl font-bold text-blue-950 mb-1 line-clamp-1 group-hover:text-green-700 transition-colors duration-200">
-    {project.title}
-  </h3>
-  <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed flex-grow">
-              <div
-  className="
+      <div className="p-4 flex flex-col h-32">
+        <h3 className="text-xl font-bold text-blue-950 mb-1 line-clamp-1 group-hover:text-green-700 transition-colors duration-200">
+          {project.title}
+        </h3>
+        <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed flex-grow">
+          <div
+            className="
     prose prose-sm max-w-none text-justify
     [&_p]:mb-3 [&_p]:leading-relaxed [&_p]:text-[15px] [&_p]:text-gray-600
     [&_ul]:list-disc [&_ul]:ml-5 [&_ul]:space-y-1
@@ -60,33 +60,37 @@ export default function ProjectCard({
     [&_b]:text-gray-800 [&_strong]:text-gray-800
     [&_i]:italic [&_em]:italic
   "
-  dangerouslySetInnerHTML={{ __html: project.description ?? "" }}
-/>
-  </p>
+            dangerouslySetInnerHTML={{ __html: project.description ?? "" }}
+          />
+        </p>
 
-  {/* Buttons Container */}
-  <div className="flex justify-between items-center mt-2">
-    <Link
-  // Title लाई URL-friendly बनाउन encodeURIComponent प्रयोग गर्नुहोस्
-  href={`/projects/${encodeURIComponent(project.title.toLowerCase().replace(/\s+/g, '-'))}`}
-  className="text-sm font-bold text-blue-600 hover:underline transition-colors"
->
-  See More
-</Link>
+        {/* Buttons Container */}
+        <div className="flex justify-between items-center mt-2">
+          <Link
+            // Title लाई URL-friendly बनाउन encodeURIComponent प्रयोग गर्नुहोस्
+            href={`/projects/${encodeURIComponent(project.title.toLowerCase().replace(/\s+/g, "-"))}`}
+            className="text-sm font-bold text-blue-600 hover:underline transition-colors"
+          >
+            See More
+          </Link>
 
-    {/* View Link (External) */}
-    {project.url && (
-      <a
-        href={project.url.startsWith("http") ? project.url : `https://${project.url}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm font-bold text-green-600 hover:underline transition-colors"
-      >
-        View Link →
-      </a>
-    )}
-  </div>
-</div>
+          {/* View Link (External) */}
+          {project.url && (
+            <a
+              href={
+                project.url.startsWith("http")
+                  ? project.url
+                  : `https://${project.url}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-bold text-green-600 hover:underline transition-colors"
+            >
+              View Link →
+            </a>
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 }

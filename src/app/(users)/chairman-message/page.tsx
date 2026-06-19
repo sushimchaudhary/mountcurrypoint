@@ -126,11 +126,7 @@ export default function About() {
         const projects = Array.isArray(projectsData) ? projectsData : [];
         const jobs = Array.isArray(jobsData) ? jobsData : [];
         const hiringJobs = jobs.filter(
-          (j: any) =>
-            j.is_active === true ||
-            j.status === "active" ||
-            j.status === "open" ||
-            j.is_hiring === true,
+          (j: any) => String(j.status).toUpperCase() === "HIRING",
         );
 
         setStats({
@@ -138,7 +134,7 @@ export default function About() {
           totalJobs: jobs.length,
           hiringJobs: hiringJobs.length,
           teamSize: team.length,
-        });
+});
       } catch {
         // fail silently
       } finally {

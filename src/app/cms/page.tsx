@@ -333,13 +333,15 @@ export default function DashboardPage() {
   const weekApplications = trend.reduce((sum, d) => sum + d.applications, 0);
 
   return (
-    <div className="space-y-5">
+
+     <div className="h-screen overflow-y-auto scrollbar-hide">
+    <div className="space-y-5 ">
       {/* ── Hero header ── */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative rounded-lg overflow-hidden p-6 md:p-8"
+        className="relative rounded-lg overflow-hidden p-6 md:p-8 "
         style={{
           background: `linear-gradient(120deg, ${primaryColor} 0%, ${shade(primaryColor, -25)} 100%)`,
         }}
@@ -387,6 +389,15 @@ export default function DashboardPage() {
           </div>
         </div>
       </motion.div>
+
+    <div className="flex justify-end mt-4">
+      <Link 
+        href="/" 
+        className="px-6 py-2  text-[#007f35] font-semibold  hover:underline flex items-center gap-2"
+      >
+        Visit Website <span>→</span>
+      </Link>
+    </div>
 
       {/* ── Primary stat row ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -623,6 +634,7 @@ export default function DashboardPage() {
         <p className="text-center border-t border-gray-300 mt-5 text-[11px] text-gray-600 p-4">
           Arya Tara · CMS · © {new Date().getFullYear()}
         </p>
+    </div>
     </div>
   );
 }

@@ -205,6 +205,7 @@ export default function SidebarNav({
     if (organization?.logo) {
       return (
         <div className={`${sizeClass} rounded-full overflow-hidden shrink-0 bg-white/10`}>
+          <Link href={"/cms"}>
           <Image
             src={organization.logo}
             alt={organization.title ?? "Logo"}
@@ -213,6 +214,7 @@ export default function SidebarNav({
             className="w-full h-full object-center"
             unoptimized // remove if you add the API domain to next.config
           />
+          </Link>
         </div>
       );
     }

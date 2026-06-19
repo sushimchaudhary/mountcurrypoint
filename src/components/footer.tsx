@@ -41,11 +41,10 @@ export default function Footer() {
 
   return (
     <div className="w-full mx-auto">
-      <footer className="bg-[#007f35] text-white pt-16 pb-8 px-4 md:px-12">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-
+      <footer className="bg-[#007f35] text-white pt-12 pb-6 px-4 md:px-12">
+<div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-12">
           {/* ── Organization info ── */}
-          <div className="space-y-4">
+          <div className="col-span-2 lg:col-span-1 space-y-4">
             <h2 className="text-2xl font-bold">
               {organization?.title ?? "Arya Tara Private Limited."}
             </h2>
@@ -84,7 +83,7 @@ export default function Footer() {
 
           {/* ── Quick Links ── */}
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Quick Links</h3>
+            <h3 className="text-lg font-semibold">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               {["About Us", "Contact Us", "Teams"].map((link) => (
                 <li key={link}>
@@ -101,7 +100,7 @@ export default function Footer() {
 
           {/* ── Projects (dynamic) ── */}
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Projects</h3>
+            <h3 className="text-lg font-semibold">Projects</h3>
             <ul className="space-y-2 text-sm">
               {projects.length > 0 ? (
                 projects.map((p) => (
@@ -123,8 +122,8 @@ export default function Footer() {
           </div>
 
           {/* ── Follow Us ── */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Follow Us</h3>
+         <div className="col-span-2 lg:col-span-1 space-y-4">
+            <h3 className="text-lg font-semibold">Follow Us</h3>
             <div className="flex gap-3">
               {SOCIAL_LINKS.map(({ Icon, href, label }) => (
                 <a

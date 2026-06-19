@@ -84,10 +84,10 @@ export default function CompanyStrategy() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-3 md:px-12 pb-12 grid grid-cols-1 lg:grid-cols-2 md:gap-12 items-start">
+<section className="max-w-7xl mx-auto px-3 md:px-12 pb-12 grid grid-cols-1 lg:grid-cols-2 md:gap-12 items-start">
 
       {/* ── Left: Tabs + content ── */}
-      <div className="min-h-[450px]">
+      <div className="min-h-[450px] order-2 lg:order-1">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-6">
           Company Strategy
         </h2>
@@ -146,17 +146,17 @@ export default function CompanyStrategy() {
       </div>
 
       {/* ── Right: Image from API ── */}
-      <div className="flex justify-center items-start mt-12">
-        <div className="relative w-full max-w-md aspect-square">
-          <Image
-            src={strategy.image || "/image/A_1.png"}
-            alt="Company Strategy"
-            fill
-            unoptimized
-            className="object-contain rounded-xl"
-          />
-        </div>
-      </div>
+<div className="flex justify-center items-start md:mt-10 mb-12 order-1 lg:order-2">
+  <div className="relative w-full  md:w-full max-w-md aspect-square ">
+    <Image
+      src={strategy.image || "/image/A_1.png"}
+      alt="Company Strategy"
+      fill
+      unoptimized
+      className="object-contain rounded-xl"
+    />
+  </div>
+</div>
     </section>
   );
 }
