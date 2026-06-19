@@ -9,14 +9,7 @@ export async function generateMetadata() {
 }
 
 export default async function AboutPage() {
-  // Server-side fetching for SEO
-  let overview = null;
-  try {
-    const data = await CompanyOverviewServices.getDetails();
-    overview = Array.isArray(data) ? data[0] : null;
-  } catch (error) {
-    console.error("Failed to fetch:", error);
-  }
 
-  return <About initialOverview={overview} />;
+
+  return <About />;
 }
