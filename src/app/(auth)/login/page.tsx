@@ -1,6 +1,7 @@
+
 // "use client";
 
-// import React, { useState } from "react";
+// import React, { useRef, useState } from "react";
 // import { useForm, Controller } from "react-hook-form";
 // import { zodResolver } from "@hookform/resolvers/zod";
 // import { LoginDTO } from "../../../types/authType";
@@ -18,6 +19,7 @@
 // import Link from "next/link";
 // import Image from "next/image";
 // import { UserServices } from "@/services/userServices";
+// import ReCAPTCHA from "react-google-recaptcha";
 
 // export default function LoginPage() {
 //   const router = useRouter();
@@ -26,19 +28,40 @@
 //   const [showPass, setShowPass] = useState(false);
 //   const [isLoading, setIsLoading] = useState(false);
 
-//   const form = useForm({
+
+   
+//   // ─── reCAPTCHA v2 state ────────────────────────────────────────────────────
+//   const recaptchaRef = useRef<ReCAPTCHA>(null);
+//   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+//   const [captchaError, setCaptchaError] = useState<string>("");
+//   // ──────────────────────────────────────────────────────────────────────────
+ 
+
+//    const form = useForm({
 //     resolver: zodResolver(LoginDTO),
-//     defaultValues: { identifier: "", password: "", remember: false },
+//     defaultValues: { username: "", password: "", remember: false },
 //   });
 
 //   const onSubmit = async (data: any) => {
+
+
+//      // ─── CAPTCHA guard ─────────────────────────────────────────────────────
+//     if (!recaptchaToken) {
+//       setCaptchaError("Please check the 'I'm not a robot' box.");
+//       return;
+//     }
+//     setCaptchaError("");
+//     // ──
+
+
 //     setIsLoading(true);
 //     try {
 //       await clearAuthCookies();
       
 //       const apiResponse = await UserServices.login({
 //         identifier: data.identifier,
-//         password: data.password
+//         password: data.password,
+//          recaptchaToken, // send to backend for optional server-side verify
 //       });
 
 //       const token = apiResponse.access || apiResponse.token;
@@ -66,6 +89,11 @@
 //     } catch (error: any) {
 //       const errorMsg = UserServices.parseError(error);
 //       toast.error(<strong>Login failed !!</strong>, { description: errorMsg });
+
+//       // Reset CAPTCHA after failed login so user must re-check
+//       recaptchaRef.current?.reset();
+//       setRecaptchaToken(null);
+
 //     } finally {
 //       setIsLoading(false);
 //     }
@@ -87,7 +115,7 @@
 //             <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 pb-8 space-y-3">
 //               <Controller
 //                 control={form.control}
-//                 name="identifier"
+//                 name="username"
 //                 render={({ field }) => (
 //                   <FormItem>
 //                     <ThemedInput 
@@ -140,11 +168,65 @@
 //                 </Link>
 //               </div>
 
-//               <ThemedButton type="submit" disabled={isLoading} className="w-full mt-4 text-sm font-bold shadow-md">
-//                 {isLoading ? <><Loader2 size={16} className="animate-spin" /> Authenticating...</> : <><LogIn size={16} /> Login</>}
-//               </ThemedButton>
+//               {/* ─── reCAPTCHA v2 Checkbox ────────────────────────────────── */}
+//                 <div className="flex flex-col gap-1 pt-1">
+//                   {/* Scale the fixed 304px widget to fill the form width */}
+//                   <div style={{ width: "100%", overflow: "hidden", borderRadius: "4px" }}>
+//                     <div
+//                       style={{ width: "304px", transformOrigin: "left center" }}
+//                       ref={(el) => {
+//                         if (el) {
+//                           const parentWidth = el.parentElement?.offsetWidth ?? 304;
+//                           el.style.transform = `scaleX(${parentWidth / 304})`;
+//                         }
+//                       }}
+//                     >
+//                       <ReCAPTCHA
+//                         ref={recaptchaRef}
+//                         sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+//                         onChange={(token) => {
+//                           setRecaptchaToken(token);
+//                           if (token) setCaptchaError("");
+//                         }}
+//                         onExpired={() => {
+//                           setRecaptchaToken(null);
+//                           setCaptchaError("CAPTCHA expired — please verify again.");
+//                         }}
+//                         onErrored={() => {
+//                           setRecaptchaToken(null);
+//                           setCaptchaError("CAPTCHA error — please try again.");
+//                         }}
+//                       />
+//                     </div>
+//                   </div>
+//                   {captchaError && (
+//                     <p className="text-[11px] text-red-500 font-medium mt-0.5">
+//                       {captchaError}
+//                     </p>
+//                   )}
+//                 </div>
+//                 {/* ─────────────────────────────────────────────────────────── */}
+ 
+//                 {/* Submit — disabled until CAPTCHA is checked */}
+//                 <ThemedButton
+//                   type="submit"
+//                   disabled={isLoading || !recaptchaToken}
+//                   className="w-full h-9 mt-4 text-sm font-bold shadow-md flex items-center justify-center gap-2"
+//                 >
+//                   {isLoading ? (
+//                     <>
+//                       <Loader2 size={16} className="animate-spin" />
+//                       Authenticating...
+//                     </>
+//                   ) : (
+//                     <>
+//                       <LogIn size={16} /> Login
+//                     </>
+//                   )}
+//                 </ThemedButton>
+ 
 
-//               <p className="text-center text-[12px] text-gray-400 mt-4">© {new Date().getFullYear()} School Management System.</p>
+//               <p className="text-center text-[12px] text-gray-400 mt-4">© {new Date().getFullYear()} Arya Tara CMS</p>
 //             </form>
 //           </Form>
 //         </div>
@@ -152,6 +234,7 @@
 //     </ConfigProvider>
 //   );
 // }
+
 
 
 
@@ -184,40 +267,34 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
-   
   // ─── reCAPTCHA v2 state ────────────────────────────────────────────────────
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>("");
   // ──────────────────────────────────────────────────────────────────────────
- 
 
-   const form = useForm({
+  const form = useForm({
     resolver: zodResolver(LoginDTO),
-    defaultValues: { username: "", password: "", remember: false },
+    defaultValues: { identifier: "", password: "", remember: false },
   });
 
   const onSubmit = async (data: any) => {
-
-
-     // ─── CAPTCHA guard ─────────────────────────────────────────────────────
+    // ─── CAPTCHA guard ─────────────────────────────────────────────────────
     if (!recaptchaToken) {
       setCaptchaError("Please check the 'I'm not a robot' box.");
       return;
     }
     setCaptchaError("");
-    // ──
-
+    // ──────────────────────────────────────────────────────────────────────
 
     setIsLoading(true);
     try {
       await clearAuthCookies();
-      
+
       const apiResponse = await UserServices.login({
-        identifier: data.identifier,
+        identifier: data.identifier, // accepts email OR username
         password: data.password,
-         recaptchaToken, // send to backend for optional server-side verify
+        recaptchaToken,
       });
 
       const token = apiResponse.access || apiResponse.token;
@@ -229,27 +306,23 @@ export default function LoginPage() {
 
       axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       await setAuthCookies(token, userData, data.remember || false);
-      
+
       if (getLoggedInUser) await getLoggedInUser();
 
       toast.success(<strong>Welcome back!</strong>);
 
-      // Redirect Logic
       if (userData?.is_admin) {
         router.push("/cms");
       } else {
         router.push("/cms");
       }
       router.refresh();
-      
     } catch (error: any) {
       const errorMsg = UserServices.parseError(error);
       toast.error(<strong>Login failed !!</strong>, { description: errorMsg });
 
-      // Reset CAPTCHA after failed login so user must re-check
       recaptchaRef.current?.reset();
       setRecaptchaToken(null);
-
     } finally {
       setIsLoading(false);
     }
@@ -271,15 +344,15 @@ export default function LoginPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 pb-8 space-y-3">
               <Controller
                 control={form.control}
-                name="username"
+                name="identifier"
                 render={({ field }) => (
                   <FormItem>
-                    <ThemedInput 
-                      label="Email or Username" 
-                      placeholder="example@gmail.com or username" 
-                      required 
-                      icon={<User size={14} />} 
-                      {...field} 
+                    <ThemedInput
+                      label="Email or Username"
+                      placeholder="example@gmail.com or username"
+                      required
+                      icon={<User size={14} />}
+                      {...field}
                     />
                     <FormMessage className="text-[11px]" />
                   </FormItem>
@@ -292,13 +365,13 @@ export default function LoginPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <ThemedInput 
-                        label="Password" 
-                        placeholder="••••••••" 
-                        required 
-                        icon={<Lock size={14} />} 
-                        type={showPass ? "text" : "password"} 
-                        {...field} 
+                      <ThemedInput
+                        label="Password"
+                        placeholder="••••••••"
+                        required
+                        icon={<Lock size={14} />}
+                        type={showPass ? "text" : "password"}
+                        {...field}
                       />
                       <FormMessage className="text-[11px]" />
                     </FormItem>
@@ -325,62 +398,59 @@ export default function LoginPage() {
               </div>
 
               {/* ─── reCAPTCHA v2 Checkbox ────────────────────────────────── */}
-                <div className="flex flex-col gap-1 pt-1">
-                  {/* Scale the fixed 304px widget to fill the form width */}
-                  <div style={{ width: "100%", overflow: "hidden", borderRadius: "4px" }}>
-                    <div
-                      style={{ width: "304px", transformOrigin: "left center" }}
-                      ref={(el) => {
-                        if (el) {
-                          const parentWidth = el.parentElement?.offsetWidth ?? 304;
-                          el.style.transform = `scaleX(${parentWidth / 304})`;
-                        }
+              <div className="flex flex-col gap-1 pt-1">
+                <div style={{ width: "100%", overflow: "hidden", borderRadius: "4px" }}>
+                  <div
+                    style={{ width: "304px", transformOrigin: "left center" }}
+                    ref={(el) => {
+                      if (el) {
+                        const parentWidth = el.parentElement?.offsetWidth ?? 304;
+                        el.style.transform = `scaleX(${parentWidth / 304})`;
+                      }
+                    }}
+                  >
+                    <ReCAPTCHA
+                      ref={recaptchaRef}
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                      onChange={(token) => {
+                        setRecaptchaToken(token);
+                        if (token) setCaptchaError("");
                       }}
-                    >
-                      <ReCAPTCHA
-                        ref={recaptchaRef}
-                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-                        onChange={(token) => {
-                          setRecaptchaToken(token);
-                          if (token) setCaptchaError("");
-                        }}
-                        onExpired={() => {
-                          setRecaptchaToken(null);
-                          setCaptchaError("CAPTCHA expired — please verify again.");
-                        }}
-                        onErrored={() => {
-                          setRecaptchaToken(null);
-                          setCaptchaError("CAPTCHA error — please try again.");
-                        }}
-                      />
-                    </div>
+                      onExpired={() => {
+                        setRecaptchaToken(null);
+                        setCaptchaError("CAPTCHA expired — please verify again.");
+                      }}
+                      onErrored={() => {
+                        setRecaptchaToken(null);
+                        setCaptchaError("CAPTCHA error — please try again.");
+                      }}
+                    />
                   </div>
-                  {captchaError && (
-                    <p className="text-[11px] text-red-500 font-medium mt-0.5">
-                      {captchaError}
-                    </p>
-                  )}
                 </div>
-                {/* ─────────────────────────────────────────────────────────── */}
- 
-                {/* Submit — disabled until CAPTCHA is checked */}
-                <ThemedButton
-                  type="submit"
-                  disabled={isLoading || !recaptchaToken}
-                  className="w-full h-9 mt-4 text-sm font-bold shadow-md flex items-center justify-center gap-2"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Authenticating...
-                    </>
-                  ) : (
-                    <>
-                      <LogIn size={16} /> Login
-                    </>
-                  )}
-                </ThemedButton>
- 
+                {captchaError && (
+                  <p className="text-[11px] text-red-500 font-medium mt-0.5">
+                    {captchaError}
+                  </p>
+                )}
+              </div>
+              {/* ─────────────────────────────────────────────────────────── */}
+
+              <ThemedButton
+                type="submit"
+                disabled={isLoading || !recaptchaToken}
+                className="w-full h-9 mt-4 text-sm font-bold shadow-md flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Authenticating...
+                  </>
+                ) : (
+                  <>
+                    <LogIn size={16} /> Login
+                  </>
+                )}
+              </ThemedButton>
 
               <p className="text-center text-[12px] text-gray-400 mt-4">© {new Date().getFullYear()} Arya Tara CMS</p>
             </form>
