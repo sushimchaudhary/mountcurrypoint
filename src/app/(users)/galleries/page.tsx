@@ -421,13 +421,13 @@ export default function GalleryPage() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-1">
+          <p className="text-[#c47c30] font-semibold text-xs uppercase tracking-widest mb-1">
             Our Moments
           </p>
           <h2 className="text-3xl md:text-4xl font-extrabold text-blue-950 leading-tight">
-            All Photos &amp; Videos
+            All Photos & Videos
           </h2>
-          <div className="mt-3 w-14 h-1 bg-green-500 rounded-full" />
+          <div className="mt-3 w-14 h-1 bg-[#c47c30] rounded-full" />
           {loading ? (
             <div className="mt-3 w-40 h-3.5 bg-gray-200 animate-pulse rounded-full" />
           ) : (

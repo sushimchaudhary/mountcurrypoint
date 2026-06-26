@@ -29,7 +29,7 @@ export default function ChooseUs() {
       {/* Heading */}
       <div className="max-w-2xl mx-auto text-center px-4 sm:px-6 mb-14 sm:mb-16">
         <div className="flex flex-col items-center gap-2 mb-4">
-          <div className="h-[2px] w-10 bg-[#f5a623]" />
+          <div className="h-[2px] w-10 bg-[#c47c30]" />
           <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-gray-400">
             Features
           </span>
@@ -85,8 +85,8 @@ function FeatureCard({ feature: f, index }: { feature: Feature; index: number })
           border border-dashed border-gray-200
           mb-6
           transition-all duration-300
-          group-hover:bg-[#f5a623] group-hover:text-white
-          group-hover:border-[#f5a623]
+          group-hover:bg-[#c47c30] group-hover:text-white
+          group-hover:border-[#c47c30]
           group-hover:shadow-lg group-hover:shadow-orange-100
         "
       >
@@ -106,7 +106,7 @@ function FeatureCard({ feature: f, index }: { feature: Feature; index: number })
       {/* Bottom accent line — appears on hover */}
       <div
         className="
-          mt-6 h-[2px] w-0 bg-[#f5a623]
+          mt-6 h-[2px] w-0 bg-[#c47c30]
           transition-all duration-300
           group-hover:w-12
         "

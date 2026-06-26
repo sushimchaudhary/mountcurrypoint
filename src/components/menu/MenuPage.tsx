@@ -13,9 +13,10 @@ import { MenuServices } from "@/services/menuServices";
 import { CategoryServices } from "@/services/categoryServices";
 import { TableServices } from "@/services/tableServices";
 import { OrderServices } from "@/services/orderServices";
+import Image from "next/image";
 
 // ── Palette ──────────────────────────────────────────────────────
-// accent #6d4c37  ink #241712  muted #8a7a6e  paper #fcf7f2  line #e8dccd  frame #e7d9c8
+// accent #c47c30  ink #241712  muted #8a7a6e  paper #fcf7f2  line #e8dccd  frame #e7d9c8
 
 function stripHtml(html: string): string {
   if (!html) return "";
@@ -261,7 +262,7 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
       ]),
       startY: 38,
       styles: { fontSize: 8 },
-      headStyles: { fillColor: [227, 89, 30] }, // #6d4c37
+      headStyles: { fillColor: [227, 89, 30] }, // #c47c30
     });
 
     const finalY = (doc as any).lastAutoTable?.finalY || 45;
@@ -285,24 +286,29 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
     return (
       <Shell>
         <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="animate-spin text-[#6d4c37]" size={32} />
+<div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="relative flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full overflow-hidden border border-slate-200 shadow-sm relative z-10">
+            <Image src="/logo.png" alt="Loading..." width={80} height={80} className="w-full h-full object-cover" />
+          </div>
+          <div className="absolute w-24 h-24 border-4 border-transparent border-t-[#c47c30] rounded-full animate-spin" />
         </div>
+      </div>        </div>
       </Shell>
     );
   }
 
   return (
     <Shell>
-      <div className="pb-28">
+      <div className="pb-20">
         {/* Header */}
         <header className="px-5 pt-5 pb-4 bg-[#fcf7f2] sticky top-0 z-20 flex items-start justify-between gap-3">
           <div>
             {tableNumber && tableValid && (
               <>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#6d4c37]" />
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#8a7a6e]">
-                    Table
+                    Table : 
                   </span>
                 </div>
                 <h1 className="text-2xl font-extrabold text-[#241712] tracking-tight mt-0.5">
@@ -314,8 +320,8 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
             {tableNumber && !tableValid && (
               <>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600">
+                  <span className="w-2 h-2 rounded-full bg-[#c47c30]" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#c47c30]">
                     Table not recognized
                   </span>
                 </div>
@@ -353,7 +359,7 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
             onClick={() => setActiveCategory("all")}
             className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-bold transition-colors ${
               activeCategory === "all"
-                ? "bg-[#6d4c37] text-white"
+                ? "bg-[#c47c30] text-white"
                 : "bg-white text-[#8a7a6e] border border-[#e8dccd]"
             }`}
           >
@@ -365,7 +371,7 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
               onClick={() => setActiveCategory(c.id)}
               className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-bold transition-colors whitespace-nowrap ${
                 activeCategory === c.id
-                  ? "bg-[#6d4c37] text-white"
+                  ? "bg-[#c47c30] text-white"
                   : "bg-white text-[#8a7a6e] border border-[#e8dccd]"
               }`}
             >
@@ -441,7 +447,7 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
                   {qty === 0 ? (
                     <button
                       onClick={() => addToCart(item)}
-                      className="flex items-center gap-2 px-4 py-1.5 bg-[#6d4c37] text-white rounded-lg text-[12px] font-bold active:scale-95 transition-transform"
+                      className="flex items-center gap-2 px-4 py-1.5 bg-[#c47c30] text-white rounded-lg text-[12px] font-bold active:scale-95 transition-transform"
                     >
                       <Plus size={16} /> Add
                     </button>
@@ -460,7 +466,7 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
                     {/* Plus Button - Rounded Full */}
                     <button 
                       onClick={() => addToCart(item)} 
-                      className="p-1 rounded-full bg-[#6d4c37] text-white shadow-sm active:scale-90 transition-transform"
+                      className="p-1 rounded-full bg-[#c47c30] text-white shadow-sm active:scale-90 transition-transform"
                     >
                       <Plus size={14} />
                     </button>
@@ -478,12 +484,12 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
       {cartCount > 0 && (
         <button
           onClick={() => { setHistoryOpen(false); setCartOpen(true); }}
-          className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full  bg-[#6d4c37] text-white px-5 py-6.5 rounded-t-2xl flex items-center justify-between z-30 transition-transform duration-200 ${
+          className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full  bg-[#c47c30] text-white px-5 py-6.5 rounded-t-2xl flex items-center justify-between z-30 transition-transform duration-200 ${
             cartOpen ? "translate-y-full" : "translate-y-0"
           }`}
         >
           <span className="flex items-center gap-2 text-[13px] font-bold">
-            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-[#6d4c37] text-[11px]">
+            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-[#c47c30] text-[11px]">
               {cartCount}
             </span>
             View order
@@ -521,7 +527,7 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
             <h2 className="text-[13px] font-bold uppercase tracking-wider text-[#8a7a6e]">
               Order — Table {tableNumber || "—"}
             </h2>
-            <button onClick={() => setCartOpen(false)} className="text-[#8a7a6e] hover:text-[#6d4c37]">
+            <button onClick={() => setCartOpen(false)} className="text-[#8a7a6e] hover:text-[#c47c30]">
               <X size={18} />
             </button>
           </div>
@@ -574,7 +580,7 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
             <button
               onClick={handlePlaceOrder}
               disabled={placing || cartLines.length === 0}
-              className="w-full py-3 bg-[#6d4c37] text-white rounded-full text-sm font-bold active:scale-[0.98] transition-transform disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 bg-[#c47c30] text-white rounded-full text-sm font-bold active:scale-[0.98] transition-transform disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {placing && <Loader2 size={14} className="animate-spin" />}
               {placing ? "Placing order…" : "Place order"}
@@ -599,8 +605,8 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
               {tableNumber && (
                 <p className="text-[12px] text-[#8a7a6e] mt-0.5">Table {tableNumber}</p>
               )}
-              <span className="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#6d4c37]/10 text-[#6d4c37]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#6d4c37]" />
+              <span className="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#c47c30]/10 text-[#c47c30]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#c47c30]" />
                 Today only
               </span>
             </div>
@@ -616,9 +622,14 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {ordersLoading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="animate-spin text-[#6d4c37]" size={24} />
-            </div>
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                    <div className="relative flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-full overflow-hidden border border-slate-200 shadow-sm relative z-10">
+                        <Image src="/logo.png" alt="Loading..." width={80} height={80} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="absolute w-24 h-24 border-4 border-transparent border-t-[#2b98e1] rounded-full animate-spin" />
+                    </div>
+                  </div>
           ) : sortedOrders.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center gap-2">
               <Inbox size={28} className="text-[#e8dccd]" />
@@ -676,7 +687,7 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
                     </span>
                     <button
                       onClick={() => downloadOrderReceipt(order)}
-                      className="flex items-center gap-1.5 text-[11px] font-bold text-[#6d4c37] px-2.5 py-1 rounded-full border border-[#6d4c37]/20 hover:bg-[#6d4c37]/10 transition-colors"
+                      className="flex items-center gap-1.5 text-[11px] font-bold text-[#c47c30] px-2.5 py-1 rounded-full border border-[#c47c30]/20 hover:bg-[#c47c30]/10 transition-colors"
                     >
                       <Download size={11} /> Receipt
                     </button>
@@ -698,9 +709,14 @@ export default function MenuPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#e7d9c8] flex justify-center">
-          <div className="w-full  min-h-screen bg-[#fcf7f2] flex items-center justify-center">
-            <Loader2 className="animate-spin text-[#6d4c37]" size={32} />
-          </div>
+          <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                  <div className="relative flex items-center justify-center">
+                    <div className="w-20 h-20 rounded-full overflow-hidden border border-slate-200 shadow-sm relative z-10">
+                      <Image src="/logo.png" alt="Loading..." width={80} height={80} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="absolute w-24 h-24 border-4 border-transparent border-t-[#c47c30] rounded-full animate-spin" />
+                  </div>
+                </div>
         </div>
       }
     >

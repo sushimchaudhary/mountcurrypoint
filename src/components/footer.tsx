@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { MdPhoneInTalk, MdLocalPhone } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { ProjectsServices } from "@/services/projectsServices";
+import { CategoryServices } from "@/services/categoryServices";
 
 const TwitterIcon = ({ size }: { size?: number }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: size, height: size }}>
@@ -17,19 +17,21 @@ const TwitterIcon = ({ size }: { size?: number }) => (
 export default function Footer() {
   const { organization } = useOrganization();
   const [projects, setProjects] = useState<{ title: string; url: string }[]>([]);
+  const [categories, setCategories] = useState<{ name: string }[]>([]);
 
-  useEffect(() => {
-    ProjectsServices.getDetails()
+useEffect(() => {
+    // Use CategoryServices to fetch data
+    CategoryServices.getDetails()
       .then((data: any[]) => {
         const list = Array.isArray(data) ? data : [];
-        setProjects(
-          list.map((p) => ({
-            title: p.title,
-            url: p.url || "#",
+        // Map only the 'name' property
+        setCategories(
+          list.map((c) => ({
+            name: c.name,
           }))
         );
       })
-      .catch(() => setProjects([]));
+      .catch(() => setCategories([]));
   }, []);
 
   const SOCIAL_LINKS = [
@@ -85,7 +87,7 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Quick Links</h3>
             <ul className="space-y-2 text-sm">
-              {["About Us", "Contact Us", "Teams", "Projects", "Career", "Legal Docs"].map((link) => (
+              {["About Us", "Contact Us", "Teams", "Menu", ].map((link) => (
                 <li key={link}>
                   <Link
                     href={`/${link.toLowerCase().replace(" ", "-")}`}
@@ -98,28 +100,29 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* ── Projects (dynamic) ── */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Projects</h3>
-            <ul className="space-y-2 text-sm">
-              {projects.length > 0 ? (
-                projects.map((p) => (
-                  <li key={p.title}>
-                    <a
-                      href={p.url.startsWith("http") ? p.url : `https://${p.url}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:pl-2 transition-all duration-300 flex items-center"
-                    >
-                      › {p.title}
-                    </a>
-                  </li>
-                ))
-              ) : (
-                <li className="opacity-60">No projects yet.</li>
-              )}
-            </ul>
-          </div>
+<div className="space-y-4">
+  <h3 className="text-lg font-semibold">Category</h3>
+  <ul className="space-y-2 text-sm">
+    {categories.length > 0 ? (
+      categories.map((c) => (
+        <li key={c.name}>
+          <Link
+            // This links to the menu page and passes the category name as a query param
+            href={{
+              pathname: "/menu",
+              query: { category: c.name.toLowerCase() },
+            }}
+            className="hover:pl-2 transition-all duration-300 flex items-center"
+          >
+            › {c.name}
+          </Link>
+        </li>
+      ))
+    ) : (
+      <li className="opacity-60">No category yet.</li>
+    )}
+  </ul>
+</div>
 
           {/* ── Follow Us ── */}
          <div className="col-span-2 lg:col-span-1 space-y-4">

@@ -14,6 +14,14 @@ interface Slider {
   order?: number;
 }
 
+const STATIC_BADGES = [
+  { num: "12+", label: "Years of taste" },
+  { num: "4.9", label: "Guest rating" },
+  { num: "60+", label: "Dishes" },
+];
+
+const FOOD_TAGS = ["Indian", "Nepali", "Momo", "Thali"];
+
 export default function HeroBanner() {
   const [sliders, setSliders] = useState<Slider[]>([]);
   const [current, setCurrent] = useState(0);
@@ -29,92 +37,152 @@ export default function HeroBanner() {
     if (sliders.length <= 1) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % sliders.length);
-    }, 6000);
+    }, 5000);
     return () => clearInterval(timer);
   }, [sliders.length]);
 
   return (
-    <section className="relative w-full h-[600px] md:h-[700px] overflow-hidden bg-[#060a06] flex items-center shadow-2xl">
-      
-      {/* Background Slider */}
+    <section className="relative w-full h-[560px] md:h-[620px] overflow-hidden bg-[#0a0603] flex items-center">
+
+      {/* ── Background slides ── */}
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
-          {sliders.map((slider, index) => (
-            index === current && (
-              <motion.div
-                key={slider.id}
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.5 }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={slider.image}
-                  alt="Hero Background"
-                  fill
-                  priority
-                  unoptimized
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-              </motion.div>
-            )
-          ))}
+          {sliders.map(
+            (slider, index) =>
+              index === current && (
+                <motion.div
+                  key={slider.id}
+                  initial={{ opacity: 0, scale: 1.04 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.4, ease: "easeInOut" }}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={slider.image}
+                    alt="Hero background"
+                    fill
+                    priority
+                    unoptimized
+                    className="object-cover"
+                  />
+                  {/* warm gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0a0603]/95 via-[#0a0603]/70 to-[#0a0603]/20" />
+                </motion.div>
+              )
+          )}
         </AnimatePresence>
+
+        {/* Fallback dark bg when no sliders */}
+        {sliders.length === 0 && (
+          <div className="absolute inset-0 bg-[#0a0603]" />
+        )}
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+      {/* ── Decorative rings ── */}
+      <div
+        className="absolute right-[-60px] top-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full pointer-events-none"
+        style={{ border: "1px solid rgba(196,124,48,0.12)" }}
+      >
+        <div
+          className="absolute inset-[40px] rounded-full"
+          style={{ border: "1px solid rgba(196,124,48,0.08)" }}
+        />
+        <div
+          className="absolute inset-[80px] rounded-full"
+          style={{ border: "1px solid rgba(196,124,48,0.05)" }}
+        />
+      </div>
+
+      {/* ── Main content ── */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-8 md:px-14 flex items-center justify-between h-full">
+
+        {/* Left: text */}
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="max-w-2xl"
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="max-w-[520px]"
         >
-          <span className="text-[#e3591e] font-semibold tracking-widest uppercase text-sm mb-4 block">
-            Welcome to Authentic Taste
-          </span>
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight">
-            The Mount <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e3591e] to-[#e3591e]">
-              Curry Point
-            </span>
+         
+
+          {/* Heading */}
+          <h1
+            className="text-5xl md:text-[58px] leading-[1.08] font-bold mb-5 text-[#f5ede0]"
+            style={{ fontFamily: "'Georgia', 'Playfair Display', serif" }}
+          >
+            The Mount
+            <br />
+            <span className="text-[#c47c30] italic">Curry Point</span>
           </h1>
-          
-          <p className="text-gray-300 mt-6 text-lg md:text-xl leading-relaxed max-w-lg">
-            Experience the true essence of Indian and Nepali culinary traditions, prepared with fresh ingredients and authentic spices.
+
+         
+
+          {/* Description */}
+          <p
+            className="text-[15px] leading-[1.72] mb-9 max-w-[380px]"
+            style={{ color: "rgba(245,237,224,0.58)" }}
+          >
+            Experience the true essence of Indian and Nepali culinary
+            traditions, prepared with fresh ingredients and authentic spices.
           </p>
 
-          <div className="flex flex-row items-center gap-4 mt-10">
+          {/* CTAs */}
+          <div className="flex flex-wrap gap-3">
             <Link
               href="/menu"
-              className="bg-[#E3591E]  text-white font-bold px-8 py-1.5 rounded-lg transition-all shadow-xl shadow-green-900/20 hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-2 bg-[#c47c30] text-[#0a0603] font-medium text-[13px] tracking-wide px-7 py-3.5 rounded-[6px] transition-all hover:bg-[#d4892f] hover:scale-[1.02] active:scale-[0.98]"
             >
-              View Menu
+              View menu
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </Link>
             <Link
               href="/contact"
-              className="border-2 border-white/20 text-white hover:bg-white/10 font-bold px-8 py-1.5 rounded-lg transition-all hover:scale-105 active:scale-95"
+              className="inline-flex items-center font-normal text-[13px] tracking-wide px-7 py-3.5 rounded-[6px] transition-all hover:scale-[1.02] active:scale-[0.98]"
+              style={{
+                border: "1px solid rgba(245,237,224,0.2)",
+                color: "rgba(245,237,224,0.78)",
+              }}
             >
-              Contact Us
+              Contact us
             </Link>
           </div>
         </motion.div>
+
+        
       </div>
 
-      {/* Slide Indicators */}
-      <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center gap-2">
-        {sliders.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrent(index)}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              index === current ? "w-8 bg-[#e3591e]" : "w-2 bg-white/50"
-            }`}
-          />
-        ))}
-      </div>
+      {/* ── Slide dots ── */}
+      {sliders.length > 1 && (
+        <div className="absolute bottom-7 left-0 right-0 z-20 flex justify-center gap-1.5">
+          {sliders.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrent(index)}
+              aria-label={`Slide ${index + 1}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                index === current
+                  ? "w-6 bg-[#c47c30]"
+                  : "w-1.5 bg-white/25 hover:bg-white/40"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* ── Slide counter ── */}
+      {sliders.length > 1 && (
+        <div
+          className="absolute bottom-7 right-10 z-20 text-[11px] tracking-[0.1em]"
+          style={{ color: "rgba(245,237,224,0.32)" }}
+          aria-live="polite"
+        >
+          {String(current + 1).padStart(2, "0")} /{" "}
+          {String(sliders.length).padStart(2, "0")}
+        </div>
+      )}
     </section>
   );
 }

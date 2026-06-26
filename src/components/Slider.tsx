@@ -102,7 +102,7 @@ export default function SliderCoverflow() {
         <Link
           href="/galleries"
           className="hidden md:flex items-center gap-1.5 text-sm font-semibold
-                     text-green-600 hover:text-green-700 transition-colors"
+                     text-[#6D4C37] hover:underline transition-colors"
         >
           View All <ArrowRight size={15} />
         </Link>
@@ -176,7 +176,7 @@ export default function SliderCoverflow() {
                 />
                 {/* Green sweep bar on active card */}
                 {i === current && (
-                  <div className="absolute bottom-0 left-0 w-full h-[3px] bg-green-500 rounded-b-2xl" />
+                  <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#c47c30] rounded-b-2xl" />
                 )}
               </motion.div>
             );

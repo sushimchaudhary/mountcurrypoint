@@ -17,7 +17,7 @@ export default function WorkingHoursSection() {
         {/* Left Side: Text and Buttons */}
         <div className="text-white">
           <div className="flex items-center gap-4 mb-6">
-            <div className="h-[2px] w-12 bg-[#f5a623]" />
+            <div className="h-[2px] w-12 bg-[#c47c30]" />
             <span className="text-xs font-bold tracking-[0.3em] uppercase">About Us</span>
           </div>
           
@@ -27,7 +27,7 @@ export default function WorkingHoursSection() {
           </p>
 
           <div className="flex gap-4">
-            <Link href="/menu" className="bg-[#f5a623] hover:bg-[#e0961f] text-white px-8 py-4 font-bold text-xs uppercase tracking-widest transition-colors">
+            <Link href="/menu" className="bg-[#c47c30] hover:bg-[#e0961f] text-white px-8 py-4 font-bold text-xs uppercase tracking-widest transition-colors">
               menu
             </Link>
             <Link href="/contact" className="border border-white/30 hover:bg-white/10 text-white px-8 py-4 font-bold text-xs uppercase tracking-widest transition-colors">

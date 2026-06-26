@@ -100,7 +100,7 @@ export default function TestimonialsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-16">
-          <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#f5a623]">
+          <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6D4C37]">
             Testimonials
           </span>
           <h2 className="text-4xl sm:text-5xl  text-[#1b2a2f] font-bold mt-4">
@@ -175,7 +175,7 @@ export default function TestimonialsSection() {
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <Link
             href="/about-us"
-            className="hidden md:inline-flex bg-[#f5a623] text-white px-8 py-4 font-bold text-xs uppercase tracking-widest hover:bg-[#e0961f] transition-colors"
+            className="hidden md:inline-flex bg-[#6D4C37] text-white px-8 py-4 font-bold text-xs uppercase tracking-widest hover:bg-[#e0961f] transition-colors"
           >
             More About Us
           </Link>
@@ -193,7 +193,7 @@ export default function TestimonialsSection() {
                 className={`tsm-prev p-3 transition-colors ${
                   isBeginning
                     ? "bg-gray-100 text-gray-300 cursor-not-allowed"
-                    : "bg-gray-100 hover:bg-[#f5a623] hover:text-white text-[#1b2a2f]"
+                    : "bg-gray-100 hover:bg-[#6D4C37] hover:text-white text-[#1b2a2f]"
                 }`}
               >
                 <FaArrowLeft />
@@ -204,7 +204,7 @@ export default function TestimonialsSection() {
                 className={`tsm-next p-3 transition-colors ${
                   isEnd
                     ? "bg-gray-200 text-gray-300 cursor-not-allowed"
-                    : "bg-[#f5a623] text-white hover:bg-[#e0961f]"
+                    : "bg-[#6D4C37] text-white hover:bg-[#6D4C37]"
                 }`}
               >
                 <FaArrowRight />
@@ -226,7 +226,7 @@ export default function TestimonialsSection() {
           transition: all 0.3s ease;
         }
         .tsm-bullet-active {
-          background: #f5a623;
+          background: #6D4C37;
           width: 24px;
         }
         .tsm-card {
@@ -266,7 +266,7 @@ function TestimonialCard({ testimonial: t, isActive }: TestimonialCardProps) {
     >
       <span
   aria-hidden="true"
-  className="tsm-quote absolute -top-12 right-8 text-[#f5a623] text-[150px] leading-none opacity-0 transition-all duration-500 select-none pointer-events-none transform rotate-[30deg]"
+  className="tsm-quote absolute -top-12 right-8 text-[#6D4C37] text-[150px] leading-none opacity-0 transition-all duration-500 select-none pointer-events-none transform rotate-[30deg]"
 >
   "
 </span>
@@ -280,7 +280,7 @@ function TestimonialCard({ testimonial: t, isActive }: TestimonialCardProps) {
 
       <div className="border-t border-dashed border-gray-200 pt-5 mt-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0">
+          <div className="w-10 h-10 rounded-full bg-orange-100 overflow-hidden shrink-0">
             <Image
               src={t.img}
               alt={t.name}

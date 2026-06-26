@@ -82,25 +82,15 @@ export default function AboutSection() {
             unoptimized
             className="object-cover rounded-sm"
           />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-            <button className="w-20 h-20 bg-[#f5a623] rounded-full flex items-center justify-center text-white hover:scale-105 transition-all duration-300">
-              <svg
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-8 h-8 ml-1"
-              >
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </button>
-          </div>
+          
         </motion.div>
 
         {/* Right Side: Content */}
         <div className="flex flex-col gap-8">
           <motion.div variants={itemVariants} className="flex flex-col gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-8 h-[2px] bg-[#f5a623]" />
-              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#f5a623]">
+              <div className="w-8 h-[2px] bg-[#c47c30]" />
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#c47c30]">
                 About Us
               </span>
             </div>
@@ -109,7 +99,7 @@ export default function AboutSection() {
               We invite you to visit our restaurant
             </h2>
 
-            <div className="text-[#666] leading-relaxed text-base font-light border-l-2 border-[#f5a623] pl-6">
+            <div className="text-[#666] leading-relaxed text-base font-light border-l-2 border-[#c47c30] pl-6">
               <div
                 dangerouslySetInnerHTML={{
                   __html: overview?.description || "Description placeholder...",
@@ -124,7 +114,7 @@ export default function AboutSection() {
           >
             <Link
               href="/about-us"
-              className="bg-[#f5a623] text-white px-8 py-3.5 font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-[#e0961f] transition-all"
+              className="bg-[#c47c30] text-white px-8 py-3.5 font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-[#e0961f] transition-all"
             >
               Read More
             </Link>
@@ -132,22 +122,22 @@ export default function AboutSection() {
             <div className="flex gap-5 text-[#1b2a2f]">
               {org?.facebook_url && (
                 <Link href={org.facebook_url} target="_blank">
-                  <FaFacebookF className="hover:text-[#f5a623] transition-colors" />
+                  <FaFacebookF className="hover:text-[#c47c30] transition-colors" />
                 </Link>
               )}
               {org?.instagram_url && (
                 <Link href={org.instagram_url} target="_blank">
-                  <FaInstagram className="hover:text-[#f5a623] transition-colors" />
+                  <FaInstagram className="hover:text-[#c47c30] transition-colors" />
                 </Link>
               )}
               {org?.twitter_url && (
                 <Link href={org.twitter_url} target="_blank">
-                  <FaTwitter className="hover:text-[#f5a623] transition-colors" />
+                  <FaTwitter className="hover:text-[#c47c30] transition-colors" />
                 </Link>
               )}
               {org?.linkdin_url && (
                 <Link href={org.linkdin_url} target="_blank">
-                  <FaLinkedinIn className="hover:text-[#f5a623] transition-colors" />
+                  <FaLinkedinIn className="hover:text-[#c47c30] transition-colors" />
                 </Link>
               )}
             </div>

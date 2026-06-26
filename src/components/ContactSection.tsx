@@ -65,8 +65,7 @@ export default function ContactSection() {
         <div className="w-full h-[500] rounded-xl overflow-hidden border border-gray-100">
           <iframe
             src={
-              organization?.location_url ||
-              "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3225.146034358264!2d139.668452!3d36.065542!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018c9bf012815a3%3A0x6c9f05eae67ebc67!2z77yI5qCq77yJ56aP56WJ44Gu6KGXIOS5heWWnOWWtualreaJgA!5e0!3m2!1sen!2snp!4v1781242532240!5m2!1sen!2snp"
+              organization?.location_url || "google map"
             }
             width="100%"
             height="100%"
@@ -140,7 +139,7 @@ export default function ContactSection() {
 
             {/* Success / Error feedback — same layout, no extra UI */}
             {success && (
-              <p className="mt-2 text-sm text-green-600 font-medium">
+              <p className="mt-2 text-sm text-[#c47c30] font-medium">
                 ✓ Message sent successfully!
               </p>
             )}
@@ -151,7 +150,7 @@ export default function ContactSection() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full mt-3 bg-green-600 text-white py-2 rounded-sm font-bold text-lg hover:bg-green-700 transition-all shadow-lg shadow-green-200 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full mt-3 bg-[#c47c30] text-white py-2 rounded-sm font-bold text-lg  transition-all shadow-lg shadow-orange-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? "Sending..." : "Send Message"}
             </button>

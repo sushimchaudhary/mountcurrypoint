@@ -20,7 +20,7 @@ export default function LandingPage() {
       </section>
 
       {/* 3. Proof: Showcase your work (Subtle Grey Background) */}
-      <section className="bg-gray-50 py-4">
+      <section className="bg-orange-50/50 py-4">
         <MenuPage/>
       </section>
 
@@ -33,7 +33,7 @@ export default function LandingPage() {
       </section>
 
       {/* 5. Authority: Trust & People (Soft Green tint to reflect growth) */}
-      <section className="bg-green-50/50 py-4">
+      <section className="bg-orange-50/50 py-4">
         <BoardOfDirectors />
       </section>
 

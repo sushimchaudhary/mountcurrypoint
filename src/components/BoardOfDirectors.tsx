@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChefHat,} from "lucide-react"; // Import Twitter as fallback for X
 import { TeamServices } from "@/services/teamServices";
 
 interface TeamMember {
@@ -15,27 +15,18 @@ interface TeamMember {
   order: number;
 }
 
-const CARD_PALETTES = [
-  { card: "#EFF6FF", circle: "#ffff" },
-  { card: "#F3F4F6", circle: "#ffff" },
-  { card: "#ECFDF5", circle: "#ffff" },
-  { card: "#FFF1F2", circle: "#ffff" },
-  { card: "#FFFBEB", circle: "#ffff" },
-  { card: "#F5F3FF", circle: "#ffff" },
-];
-
-// ── Skeleton ──────────────────────────────────────────────────────────────────
+// ── Skeleton (Matching the rectangular card UI) ───────────────────────────────
 function TeamSkeleton({ count = 5 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="flex flex-col items-center animate-pulse">
-          {/* Circle */}
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-200 mb-[-2rem] z-10 relative" />
-          {/* Card */}
-          <div className="w-full pt-12 pb-5 px-3 rounded-lg bg-gray-100 flex flex-col items-center gap-2">
-            <div className="h-3 w-24 bg-gray-200 rounded-full" />
-            <div className="h-2.5 w-16 bg-gray-200 rounded-full" />
+        <div key={i} className="bg-white p-6 rounded-lg shadow-sm border border-[#E9E1D9] flex flex-col items-center gap-4 animate-pulse">
+          <div className="w-32 h-32 rounded-full bg-[#F3EEE9]" /> {/* Round avatar skeleton */}
+          <div className="h-5 w-3/4 bg-[#F3EEE9] rounded" /> {/* Name skeleton */}
+          <div className="h-4 w-1/2 bg-[#F3EEE9] rounded" /> {/* Position skeleton */}
+          <div className="flex gap-4 mt-2"> {/* Icons skeleton */}
+            <div className="h-5 w-5 bg-[#F3EEE9] rounded-full" />
+            <div className="h-5 w-5 bg-[#F3EEE9] rounded-full" />
           </div>
         </div>
       ))}
@@ -43,7 +34,7 @@ function TeamSkeleton({ count = 5 }: { count?: number }) {
   );
 }
 
-// ── Single card ───────────────────────────────────────────────────────────────
+// ── Single Card (Refactored to match exact UI of reference image) ─────────────────
 export function MemberCard({
   member,
   index,
@@ -51,50 +42,44 @@ export function MemberCard({
   member: TeamMember;
   index: number;
 }) {
-  const palette = CARD_PALETTES[index % CARD_PALETTES.length];
+  // Extracting X and Linkedin if they exist in a real implementation (for demo we use fallback)
+  // In a real app, these would come from member.socialX and member.socialLinkedin, etc.
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.45, delay: index * 0.07 }}
-      className="flex flex-col items-center"
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ duration: 0.5, delay: index * 0.08 }}
+      className="bg-white p-6 rounded-lg shadow-sm border border-[#E9E1D9] flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:border-[#DDCBC0]"
     >
-      {/* Avatar — overlaps card */}
-      <div
-        className="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center shrink-0 mb-[-2rem] z-10 relative shadow-md"
-        style={{ backgroundColor: palette.circle }}
-      >
-        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden">
-          <Image
-            src={member.image}
-            alt={member.name}
-            width={80}
-            height={80}
-            unoptimized
-            className="w-full h-full object-cover object-top"
-          />
-        </div>
+      {/* Round Avatar Container (matching size/style from reference image) */}
+      <div className="w-32 h-32 rounded-full overflow-hidden mb-5 flex items-center justify-center border-4 border-[#FDFBFA] shadow-inner">
+        <Image
+          src={member.image}
+          alt={member.name}
+          width={128}
+          height={128}
+          unoptimized // Use unoptimized only if required by your backend
+          className="w-full h-full object-cover object-top"
+        />
       </div>
 
-      {/* Card body */}
-      <div
-        className="w-full rounded-lg pt-15 pb-4 px-3 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300"
-        style={{ backgroundColor: palette.card }}
-      >
-        <p className="font-bold text-gray-900 text-[13px] sm:text-[14px] leading-snug line-clamp-1">
-          {member.name}
-        </p>
-        <p className="text-gray-400 text-[11px] sm:text-[12px] mt-1 capitalize line-clamp-1">
-          {member.position}
-        </p>
-      </div>
+      {/* Name (matching serif-style font feel and color from palette) */}
+      <p className="font-serif font-bold text-[#c47c30] text-[17px] leading-tight line-clamp-1 mb-1.5">
+        {member.name}
+      </p>
+
+      {/* Position (matching smaller, beige text from reference image) */}
+      <p className="text-[#A29184] text-[13px] font-medium leading-tight capitalize line-clamp-1 mb-5">
+        {member.position}
+      </p>
+
+      
     </motion.div>
   );
 }
 
-// ── Section ───────────────────────────────────────────────────────────────────
 export default function BoardOfDirectors() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,57 +98,64 @@ export default function BoardOfDirectors() {
   const preview = members.slice(0, 5);
 
   return (
-    <section className="max-w-7xl mx-auto md:px-12 px-4 py-12">
-      {/* Heading */}
+    <section className=" max-w-full mx-auto px-6 py-16 md:px-16 md:py-20">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 25 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-10"
+        transition={{ duration: 0.7 }}
+        className="text-center mb-20 flex flex-col items-center"
       >
-        <p className="text-green-600 font-semibold text-sm uppercase tracking-widest mb-1">
-          Our Team Members
-        </p>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900">
-          Meet the Brilliant Minds Behind Our Success
+        {/* Kitchen-specific subtitle */}
+        <div className="flex items-center gap-2 mb-2 text-[#c47c30]">
+          <ChefHat size={20} strokeWidth={1.5} className="-mt-0.5" />
+          <p className="font-medium text-[15px] uppercase tracking-widest">
+            The Culinary Artisans
+          </p>
+        </div>
+
+        {/* Warm, inviting title */}
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-extrabold text-[#2D241F] max-w-4xl leading-tight mb-5">
+          Meet the Hands That Craft Your Experience
         </h2>
-        <p className="text-gray-400 mt-3 text-sm md:text-base max-w-xl mx-auto">
-          A passionate team of innovators, creators, and problem-solvers working
-          together to make an impact.
+
+        {/* Descriptive, welcoming paragraph */}
+        <p className="text-[#6D625A] text-base md:text-lg max-w-3xl leading-relaxed">
+          From our master chefs to our dedicated front-of-house team, these are the 
+          passionate individuals committed to bringing flavor, warmth, and 
+          excellence to every plate we serve.
         </p>
       </motion.div>
 
-      {/* Skeleton */}
       {loading && <TeamSkeleton count={5} />}
 
-      {/* Error */}
       {error && !loading && (
-        <p className="text-center text-red-500 font-medium py-10">{error}</p>
+        <div className="text-center py-16 border border-[#E9E1D9] rounded-lg bg-white shadow-sm">
+          <p className="text-red-500 font-semibold text-lg">{error}</p>
+        </div>
       )}
 
-      {/* Empty */}
       {!loading && !error && members.length === 0 && (
-        <p className="text-center text-gray-400 py-10">No team members yet.</p>
+        <div className="text-center py-16 border border-[#E9E1D9] rounded-lg bg-white shadow-sm">
+          <p className="text-[#A29184] text-lg font-medium">No team members yet.</p>
+        </div>
       )}
 
-      {/* Grid: 2 cols on mobile → 3 sm → 4 md → 5 lg */}
       {!loading && !error && preview.length > 0 && (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8">
             {preview.map((member, index) => (
               <MemberCard key={member.id} member={member} index={index} />
             ))}
           </div>
 
-          {/* View All button */}
           {members.length > 5 && (
-            <div className="flex justify-center mt-10">
+            <div className="flex justify-center mt-16">
               <Link
                 href="/teams"
-                className="flex items-center gap-2 bg-green-600 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-green-700 transition-colors shadow-md shadow-green-200"
+                className="flex items-center gap-2.5 bg-[#c47c30] text-white px-8 py-3.5 rounded-full text-[15px] font-semibold hover:bg-[#5D4037] transition-colors shadow-md shadow-[#DDCBC0]"
               >
-                View All Members <ArrowRight size={16} />
+                View All Members <ArrowRight size={18} strokeWidth={2.5} />
               </Link>
             </div>
           )}
