@@ -3,9 +3,18 @@
 import "ckeditor5/ckeditor5-content.css";
 import Image from "next/image";
 import { motion, Variants } from "framer-motion";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CompanyOverviewServices } from "@/services/companyoverviewServices";
+import { OrganizationServices } from "@/services/organizationServices";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTwitter,
+  FaLinkedinIn,
+} from "react-icons/fa";
+import Link from "next/link";
+import ChooseUs from "./Features";
+import WorkingHoursSection from "./WorkingHoursSection";
 
 interface Overview {
   id: number;
@@ -13,123 +22,152 @@ interface Overview {
   company_img: string;
 }
 
-// ── Skeleton ──────────────────────────────────────────────────────────────────
-function AboutSectionSkeleton() {
-  return (
-    <div className="max-w-7xl mx-auto px-4 py-16 md:px-12 animate-pulse">
-      <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-12 lg:gap-16">
-        <div className="relative aspect-square md:aspect-auto md:h-[500px] w-full">
-          <div className="w-[90%] h-[90%] bg-gray-200 rounded-2xl" />
-        </div>
-        <div className="flex flex-col gap-4">
-          <div className="h-3 w-16 bg-gray-200 rounded-full" />
-          <div className="h-8 w-3/4 bg-gray-200 rounded-full" />
-          <div className="space-y-2 mt-2">
-            {[...Array(5)].map((_, i) => (
-              <div
-                key={i}
-                className={`h-3 bg-gray-200 rounded-full ${i === 4 ? "w-2/3" : "w-full"}`}
-              />
-            ))}
-          </div>
-          <div className="h-10 w-32 bg-gray-200 rounded mt-2" />
-        </div>
-      </div>
-    </div>
-  );
+interface Organization {
+  facebook_url: string;
+  instagram_url: string;
+  twitter_url: string;
+  linkdin_url: string;
 }
 
 export default function AboutSection() {
   const [overview, setOverview] = useState<Overview | null>(null);
+  const [org, setOrg] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    CompanyOverviewServices.getDetails()
-      .then((data) => {
-        const list = Array.isArray(data) ? data : [];
-        setOverview(list[0] ?? null);
+    Promise.all([
+      CompanyOverviewServices.getDetails(),
+      OrganizationServices.getDetails(),
+    ])
+      .then(([overviewData, orgData]) => {
+        setOverview(
+          Array.isArray(overviewData) ? overviewData[0] : overviewData,
+        );
+        setOrg(Array.isArray(orgData) ? orgData[0] : orgData);
       })
-      .catch(() => setOverview(null))
       .finally(() => setLoading(false));
   }, []);
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
   };
 
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
   };
 
-  if (loading) return <AboutSectionSkeleton />;
+  if (loading) return <div className="min-h-[600px]" />;
 
   return (
     <motion.section
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: true, amount: 0.1 }}
       variants={containerVariants}
-      className="max-w-7xl mx-auto px-4 py-16 md:px-12"
+      className="max-w-7xl mx-auto px-6 py-24"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-12 lg:gap-16">
-
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
         {/* Left Side: Image */}
         <motion.div
           variants={itemVariants}
-          className="relative aspect-square md:aspect-auto md:h-[500px] w-full"
+          className="relative aspect-[4/3] w-full shadow-xl"
         >
-          <motion.div className="relative z-10 w-[90%] h-[90%] overflow-hidden rounded-2xl shadow-2xl">
-            <Image
-              src={overview?.company_img || "/image/A_1.png"}
-              alt="Arya Tara Main"
-              fill
-              unoptimized
-              sizes="50vw"
-              className="object-cover"
-            />
-          </motion.div>
-          <div className="absolute top-10 right-0 w-[90%] h-[90%] border-4 border-green-600 rounded-2xl -z-0" />
+          <Image
+            src={overview?.company_img || "/placeholder.jpg"}
+            alt="About Us"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            fill
+            unoptimized
+            className="object-cover rounded-sm"
+          />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+            <button className="w-20 h-20 bg-[#f5a623] rounded-full flex items-center justify-center text-white hover:scale-105 transition-all duration-300">
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-8 h-8 ml-1"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+          </div>
         </motion.div>
 
-        {/* Right Side: CKEditor HTML rendered as-is */}
-        <motion.div
-          variants={containerVariants}
-          className="flex flex-col items-start gap-4"
-        >
-          <motion.span
+        {/* Right Side: Content */}
+        <div className="flex flex-col gap-8">
+          <motion.div variants={itemVariants} className="flex flex-col gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-[2px] bg-[#f5a623]" />
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#f5a623]">
+                About Us
+              </span>
+            </div>
+
+            <h2 className="text-4xl md:text-5xl font-serif text-[#1b2a2f] leading-[1.1] font-medium">
+              We invite you to visit our restaurant
+            </h2>
+
+            <div className="text-[#666] leading-relaxed text-base font-light border-l-2 border-[#f5a623] pl-6">
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: overview?.description || "Description placeholder...",
+                }}
+              />
+            </div>
+          </motion.div>
+
+          <motion.div
             variants={itemVariants}
-            className="text-green-600 font-bold text-sm tracking-widest uppercase"
+            className="flex items-center gap-8"
           >
-            About Us
-          </motion.span>
-
-          <motion.h2
-            variants={itemVariants}
-            className="text-3xl md:text-4xl font-extrabold text-blue-950 mb-1"
-          >
-            ARYA TARA PVT. LTD.
-          </motion.h2>
-
-          {overview?.description && (
-            <motion.div
-              variants={itemVariants}
-              className="ck-content prose prose-sm max-w-prose text-gray-700 leading-relaxed text-justify"
-              dangerouslySetInnerHTML={{ __html: overview.description }}
-            />
-          )}
-
-          <motion.div variants={itemVariants}>
             <Link
-              href="/company-information"
-              className="inline-block bg-green-600 text-white px-8 py-3 rounded font-semibold text-sm hover:bg-green-700 transition-colors mt-4 shadow-lg"
+              href="/about-us"
+              className="bg-[#f5a623] text-white px-8 py-3.5 font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-[#e0961f] transition-all"
             >
               Read More
             </Link>
+
+            <div className="flex gap-5 text-[#1b2a2f]">
+              {org?.facebook_url && (
+                <Link href={org.facebook_url} target="_blank">
+                  <FaFacebookF className="hover:text-[#f5a623] transition-colors" />
+                </Link>
+              )}
+              {org?.instagram_url && (
+                <Link href={org.instagram_url} target="_blank">
+                  <FaInstagram className="hover:text-[#f5a623] transition-colors" />
+                </Link>
+              )}
+              {org?.twitter_url && (
+                <Link href={org.twitter_url} target="_blank">
+                  <FaTwitter className="hover:text-[#f5a623] transition-colors" />
+                </Link>
+              )}
+              {org?.linkdin_url && (
+                <Link href={org.linkdin_url} target="_blank">
+                  <FaLinkedinIn className="hover:text-[#f5a623] transition-colors" />
+                </Link>
+              )}
+            </div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
+      {/* Features Section placed logically below main content */}
+      <motion.div
+        variants={itemVariants}
+        className="mt-2 "
+      >
+        <ChooseUs />
+      </motion.div>
+
+      <motion.div
+        variants={itemVariants}
+        className="mt-2 "
+      >
+        <WorkingHoursSection />
+      </motion.div>
     </motion.section>
   );
 }

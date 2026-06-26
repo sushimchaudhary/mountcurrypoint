@@ -12,15 +12,13 @@ import {
   Phone,
   Globe,
   MapPin,
-  Download,
-  Printer,
+  
   PhoneCall,
 } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-import { ThemedButton } from "@/components/ui/themedButton";
 import Avatar from "antd/es/avatar/Avatar";
 import { Building2 } from "lucide-react";
 import { OrganizationServices } from "@/services/organizationServices";
@@ -266,6 +264,7 @@ export default function OrganizationTable({
                 </tr>
               ) : (
                 paginated.map((item, index) => {
+                  console.log("Logo URL:", item.logo_url || item.logo);
                   const isSelected = selectedIds.includes(item.id);
                   return (
                     <tr
@@ -289,8 +288,8 @@ export default function OrganizationTable({
                       <td className="px-4 py-1.5 min-w-[180px]">
                         <div className="flex items-center gap-3">
                           <Avatar
-                            src={item.logo_url || item.logo}
-                            icon={<Building2 size={14} />}
+                           src={item.logo_url || item.logo}
+                           icon={<Building2 size={14} />}
                             size={32}
                             shape="square"
                             className="border border-gray-100 shadow-sm bg-gray-50 text-blue-600 shrink-0"

@@ -2,15 +2,16 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  /* Updated to match your restaurant's primary dark text color */
+  --foreground: #1b2a2f; 
+  --accent: #f5a623;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --font-serif: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,6 +27,7 @@
 }
 
 body {
+  font-family: var(--font-serif);
   background: var(--background);
   color: var(--foreground);
 }
@@ -56,8 +58,9 @@ body {
 }
 
 .ck-content p {
-  margin-bottom: 0.75rem;
-  line-height: 1.75;
+  margin-bottom: 1rem;
+  line-height: 1.8;
+  color: #666666; /* Slightly lighter for better readability than pure black */
 }
 
 .ck-content p:last-child {
@@ -99,8 +102,8 @@ body {
 .ck-content h3,
 .ck-content h4 {
   font-weight: 700;
-  color: #1e3a5f;
-  margin: 1rem 0 0.5rem;
+  color: #1b2a2f; /* Matches your theme */
+  margin: 1.5rem 0 1rem;
 }
 
 
@@ -110,4 +113,14 @@ body {
 .ck-content ol { list-style-type: decimal; }
 .ck-content ul { list-style-type: disc; }
 
+.border-dotted-large {
+  border-top: 4px dotted #d1d5db; /* 4px thickness, dotted style, light-grey color */
+}
 
+
+
+.swiper-slide {
+    height: auto !important;
+    display: flex !important;
+    justify-content: center !important;
+}

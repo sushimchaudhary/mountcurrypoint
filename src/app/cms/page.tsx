@@ -4,18 +4,23 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Users2,
-  FolderKanban,
-  Image as ImageIcon,
-  BriefcaseBusiness,
-  MessageSquareText,
-  SlidersHorizontal,
+  DollarSign,
+  ClipboardList,
+  ChefHat,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  Wallet,
+  Receipt,
+  Banknote,
+  CreditCard,
+  Smartphone,
   ArrowUpRight,
   Clock,
   ChevronRight,
   Sparkles,
 } from "lucide-react";
-import { format, subDays, isAfter } from "date-fns";
+import { format, subDays, isSameDay } from "date-fns";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -26,34 +31,46 @@ import {
   PieChart,
   Pie,
   Cell,
- 
 } from "recharts";
 import { useTheme } from "@/lib/context/ThemeContext";
-import { ContactServices } from "@/services/contactServices";
-import { GalleryServices } from "@/services/galleryServices";
-import { JobServices, JobApplicationServices } from "@/services/jobServices";
-import { ProjectsServices } from "@/services/projectsServices";
-import { SliderServices } from "@/services/sliderServices";
-import { TeamServices } from "@/services/teamServices";
+import { BillServices } from "@/services/billServices";
+import { OrderServices } from "@/services/orderServices";
+import { OrganizationServices } from "@/services/organizationServices";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface DashboardStats {
-  contacts: number;
-  gallery: number;
-  jobs: number;
-  hiringJobs: number;
-  applications: number;
-  projects: number;
-  sliders: number;
-  team: number;
+  totalBills: number;
+  paidBills: number;
+  unpaidBills: number;
+  totalRevenue: number;
+  pendingAmount: number;
+  avgBillValue: number;
+  todayRevenue: number;
+  todayOrders: number;
+  totalOrders: number;
+  openOrders: number;
+  completedOrders: number;
+  cancelledOrders: number;
+  revenueTrend?: number;
 }
 
-interface RecentContact {
-  id: number;
-  name: string;
-  subject: string;
-  created_at?: string;
-}
+const PAYMENT_LABELS: Record<string, string> = {
+  cash: "Cash",
+  card: "Card",
+  digital_wallet: "QR Pay",
+};
+
+const PAYMENT_COLORS: Record<string, string> = {
+  cash: "#22c55e",
+  card: "#3b82f6",
+  digital_wallet: "#a855f7",
+};
+
+const PAYMENT_ICONS: Record<string, React.ElementType> = {
+  cash: Banknote,
+  card: CreditCard,
+  digital_wallet: Smartphone,
+};
 
 // ── Color helper ──────────────────────────────────────────────────────────────
 function hexToRgba(hex: string, alpha: number) {
@@ -80,28 +97,26 @@ function shade(hex: string, percent: number) {
   return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, "0")}`;
 }
 
-// ── Build last-14-days submission trend from contacts + applications ─────────
-function buildTrend(contacts: any[], applications: any[]) {
+// ── Build last-14-days revenue + order volume trend from bills + orders ──────
+function buildTrend(bills: any[], orders: any[]) {
   const days = Array.from({ length: 14 }, (_, i) => {
     const date = subDays(new Date(), 13 - i);
-    return { date, label: format(date, "dd MMM"), messages: 0, applications: 0 };
+    return { date, label: format(date, "dd MMM"), revenue: 0, orders: 0 };
   });
 
-  const countInto = (items: any[], key: "messages" | "applications") => {
-    items.forEach((item) => {
-      const dateField = item.created_at || item.submitted_at;
-      if (!dateField) return;
-      const itemDate = new Date(dateField);
-      const bucket = days.find(
-        (d) =>
-          d.date.toDateString() === itemDate.toDateString()
-      );
-      if (bucket) bucket[key] += 1;
-    });
-  };
+  bills.forEach((bill) => {
+    if (!bill.created_at) return;
+    const billDate = new Date(bill.created_at);
+    const bucket = days.find((d) => d.date.toDateString() === billDate.toDateString());
+    if (bucket) bucket.revenue += Number(bill.grand_total) || 0;
+  });
 
-  countInto(contacts, "messages");
-  countInto(applications, "applications");
+  orders.forEach((order) => {
+    if (!order.created_at) return;
+    const orderDate = new Date(order.created_at);
+    const bucket = days.find((d) => d.date.toDateString() === orderDate.toDateString());
+    if (bucket) bucket.orders += 1;
+  });
 
   return days;
 }
@@ -136,7 +151,7 @@ function PrimaryStat({
 }: {
   icon: React.ElementType;
   label: string;
-  value: number;
+  value: number | string;
   href: string;
   trend?: number;
   primaryColor: string;
@@ -205,7 +220,7 @@ function MiniStat({
 }: {
   icon: React.ElementType;
   label: string;
-  value: number;
+  value: number | string;
   href: string;
   primaryColor: string;
 }) {
@@ -229,7 +244,7 @@ function MiniStat({
   );
 }
 
-// ── Custom tooltip for the area chart ─────────────────────────────────────────
+// ── Custom tooltip for the area chart (handles $ revenue + order counts) ─────
 function ChartTooltip({ active, payload, label, primaryColor }: any) {
   if (!active || !payload?.length) return null;
   return (
@@ -239,10 +254,12 @@ function ChartTooltip({ active, payload, label, primaryColor }: any) {
         <div key={p.dataKey} className="flex items-center gap-2">
           <span
             className="w-2 h-2 rounded-full"
-            style={{ backgroundColor: p.dataKey === "messages" ? primaryColor : "#fbbf24" }}
+            style={{ backgroundColor: p.dataKey === "revenue" ? primaryColor : "#fbbf24" }}
           />
           <span className="text-gray-500 capitalize">{p.dataKey}:</span>
-          <span className="font-bold text-gray-800">{p.value}</span>
+          <span className="font-bold text-gray-800">
+            {p.dataKey === "revenue" ? `$${Number(p.value).toFixed(2)}` : p.value}
+          </span>
         </div>
       ))}
     </div>
@@ -253,60 +270,73 @@ function ChartTooltip({ active, payload, label, primaryColor }: any) {
 export default function DashboardPage() {
   const { primaryColor } = useTheme();
   const [loading, setLoading] = useState(true);
+  const [bills, setBills] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [restaurant, setRestaurant] = useState<any>(null);
   const [stats, setStats] = useState<DashboardStats>({
-    contacts: 0, gallery: 0, jobs: 0, hiringJobs: 0,
-    applications: 0, projects: 0, sliders: 0, team: 0,
+    totalBills: 0, paidBills: 0, unpaidBills: 0,
+    totalRevenue: 0, pendingAmount: 0, avgBillValue: 0,
+    todayRevenue: 0, todayOrders: 0, totalOrders: 0,
+    openOrders: 0, completedOrders: 0, cancelledOrders: 0,
   });
-  const [recentContacts, setRecentContacts] = useState<RecentContact[]>([]);
   const [trend, setTrend] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchAll() {
       try {
-        const [
-          contactsRes, galleryRes, jobsRes, applicationsRes,
-          projectsRes, slidersRes, teamRes,
-        ] = await Promise.all([
-          ContactServices.getList().catch(() => []),
-          GalleryServices.getDetails().catch(() => []),
-          JobServices.getDetails().catch(() => []),
-          JobApplicationServices.getApplications().catch(() => []),
-          ProjectsServices.getDetails().catch(() => []),
-          SliderServices.getDetails().catch(() => []),
-          TeamServices.getDetails().catch(() => []),
+        const [billsRes, ordersRes, orgRes] = await Promise.all([
+          BillServices.getDetails().catch(() => []),
+          OrderServices.getDetails().catch(() => []),
+          OrganizationServices.getDetails().catch(() => []),
         ]);
 
-        const contacts = Array.isArray(contactsRes) ? contactsRes : contactsRes?.results || [];
-        const gallery = Array.isArray(galleryRes) ? galleryRes : [];
-        const jobs = Array.isArray(jobsRes) ? jobsRes : [];
-        const applications = Array.isArray(applicationsRes) ? applicationsRes : applicationsRes?.results || [];
-        const projects = Array.isArray(projectsRes) ? projectsRes : [];
-        const sliders = Array.isArray(slidersRes) ? slidersRes : [];
-        const team = Array.isArray(teamRes) ? teamRes : [];
+        const billsList = Array.isArray(billsRes) ? billsRes : billsRes?.results || [];
+        const ordersList = Array.isArray(ordersRes) ? ordersRes : ordersRes?.results || [];
+        const orgList = Array.isArray(orgRes) ? orgRes : orgRes?.results || orgRes?.data || [];
 
-        const hiringJobs = jobs.filter((j: any) => j.status === "HIRING").length;
+        setBills(billsList);
+        setOrders(ordersList);
+        setRestaurant(orgList[0] || null);
+
+        const paid = billsList.filter((b: any) => b.is_paid);
+        const unpaid = billsList.filter((b: any) => !b.is_paid);
+        const totalRevenue = paid.reduce((sum: number, b: any) => sum + (Number(b.grand_total) || 0), 0);
+        const pendingAmount = unpaid.reduce((sum: number, b: any) => sum + (Number(b.grand_total) || 0), 0);
+        const avgBillValue = paid.length > 0 ? totalRevenue / paid.length : 0;
+
+        const today = new Date();
+        const yesterday = subDays(today, 1);
+        const todayBills = billsList.filter((b: any) => b.created_at && isSameDay(new Date(b.created_at), today));
+        const yesterdayBills = billsList.filter((b: any) => b.created_at && isSameDay(new Date(b.created_at), yesterday));
+        const todayOrdersList = ordersList.filter((o: any) => o.created_at && isSameDay(new Date(o.created_at), today));
+
+        const todayRevenue = todayBills.reduce((sum: number, b: any) => sum + (Number(b.grand_total) || 0), 0);
+        const yesterdayRevenue = yesterdayBills.reduce((sum: number, b: any) => sum + (Number(b.grand_total) || 0), 0);
+        const revenueTrend = yesterdayRevenue > 0
+          ? Math.round(((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100)
+          : undefined;
+
+        const openOrders = ordersList.filter((o: any) => ["pending", "preparing", "served"].includes(o.status)).length;
+        const completedOrders = ordersList.filter((o: any) => o.status === "completed").length;
+        const cancelledOrders = ordersList.filter((o: any) => o.status === "cancelled").length;
 
         setStats({
-          contacts: contacts.length,
-          gallery: gallery.length,
-          jobs: jobs.length,
-          hiringJobs,
-          applications: applications.length,
-          projects: projects.length,
-          sliders: sliders.length,
-          team: team.length,
+          totalBills: billsList.length,
+          paidBills: paid.length,
+          unpaidBills: unpaid.length,
+          totalRevenue,
+          pendingAmount,
+          avgBillValue,
+          todayRevenue,
+          todayOrders: todayOrdersList.length,
+          totalOrders: ordersList.length,
+          openOrders,
+          completedOrders,
+          cancelledOrders,
+          revenueTrend,
         });
 
-        const sortedContacts = [...contacts]
-          .sort((a: any, b: any) =>
-            a.created_at && b.created_at
-              ? new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-              : 0
-          )
-          .slice(0, 5);
-        setRecentContacts(sortedContacts);
-
-        setTrend(buildTrend(contacts, applications));
+        setTrend(buildTrend(billsList, ordersList));
       } catch {
         // fail silently
       } finally {
@@ -318,19 +348,29 @@ export default function DashboardPage() {
 
   if (loading) return <DashboardSkeleton />;
 
-  const contentDistribution = [
-    { name: "Projects", value: stats.projects, color: primaryColor },
-    { name: "Gallery", value: stats.gallery, color: shade(primaryColor, 40) },
-    { name: "Jobs", value: stats.jobs, color: shade(primaryColor, 80) },
-    { name: "Sliders", value: stats.sliders, color: shade(primaryColor, -30) },
-    { name: "Team", value: stats.team, color: "#fbbf24" },
-  ].filter((d) => d.value > 0);
+  // Payment method breakdown (by revenue collected)
+  const paymentDistribution = Object.entries(
+    bills.reduce((acc: Record<string, number>, b: any) => {
+      const method = b.payment_method || "other";
+      acc[method] = (acc[method] || 0) + (Number(b.grand_total) || 0);
+      return acc;
+    }, {})
+  )
+    .map(([method, value]) => ({
+      method,
+      name: PAYMENT_LABELS[method] || method,
+      value: value as number,
+      color: PAYMENT_COLORS[method] || "#9ca3af",
+    }))
+    .filter((d) => d.value > 0);
 
-  const totalContent =
-    stats.projects + stats.gallery + stats.jobs + stats.sliders + stats.team;
-
-  const weekMessages = trend.reduce((sum, d) => sum + d.messages, 0);
-  const weekApplications = trend.reduce((sum, d) => sum + d.applications, 0);
+  const recentBills = [...bills]
+    .sort((a: any, b: any) =>
+      a.created_at && b.created_at
+        ? new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        : 0
+    )
+    .slice(0, 5);
 
   return (
 
@@ -364,26 +404,26 @@ export default function DashboardPage() {
               {format(new Date(), "EEEE, dd MMMM yyyy")}
             </div>
             <h1 className="text-2xl md:text-[28px] font-extrabold text-white leading-tight">
-              Welcome back 👋
+              Welcome back{restaurant?.title ? `, ${restaurant.title}` : ""} 👋
             </h1>
             <p className="text-white/75 text-sm mt-1.5 max-w-md">
-              {totalContent} pieces of content live across your site, with{" "}
-              {stats.hiringJobs} open position{stats.hiringJobs !== 1 ? "s" : ""} hiring now.
+              {stats.totalBills} bill{stats.totalBills !== 1 ? "s" : ""} generated so far, with{" "}
+              {stats.unpaidBills} still awaiting payment.
             </p>
           </div>
 
           {/* Mini summary pills */}
           <div className="flex gap-3">
             <div className="bg-white/15 backdrop-blur-sm rounded-lg px-4 py-3 text-center min-w-[88px]">
-              <p className="text-white text-xl font-black tabular-nums">{weekMessages}</p>
+              <p className="text-white text-xl font-black tabular-nums">${stats.todayRevenue.toFixed(0)}</p>
               <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider mt-0.5">
-                Msgs / 14d
+                Revenue Today
               </p>
             </div>
             <div className="bg-white/15 backdrop-blur-sm rounded-lg px-4 py-3 text-center min-w-[88px]">
-              <p className="text-white text-xl font-black tabular-nums">{weekApplications}</p>
+              <p className="text-white text-xl font-black tabular-nums">{stats.todayOrders}</p>
               <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider mt-0.5">
-                Apps / 14d
+                Orders Today
               </p>
             </div>
           </div>
@@ -401,16 +441,45 @@ export default function DashboardPage() {
 
       {/* ── Primary stat row ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <PrimaryStat icon={MessageSquareText} label="Messages" value={stats.contacts} href="/cms/contacts" primaryColor={primaryColor} index={0} />
-        <PrimaryStat icon={FolderKanban} label="Projects" value={stats.projects} href="/cms/project-manage" primaryColor={primaryColor} index={1} />
-        <PrimaryStat icon={BriefcaseBusiness} label="Open Jobs" value={stats.hiringJobs} href="/cms/jobs-details" primaryColor={primaryColor} index={2} />
-        <PrimaryStat icon={Users2} label="Applications" value={stats.applications} href="/cms/job-applications" primaryColor={primaryColor} index={3} />
+        <PrimaryStat
+          icon={DollarSign}
+          label="Today's Revenue"
+          value={`$${stats.todayRevenue.toFixed(2)}`}
+          href="/cms/bills"
+          trend={stats.revenueTrend}
+          primaryColor={primaryColor}
+          index={0}
+        />
+        <PrimaryStat
+          icon={ClipboardList}
+          label="Orders Today"
+          value={stats.todayOrders}
+          href="/cms/orders"
+          primaryColor={primaryColor}
+          index={1}
+        />
+        <PrimaryStat
+          icon={ChefHat}
+          label="Open Orders"
+          value={stats.openOrders}
+          href="/cms/orders"
+          primaryColor={primaryColor}
+          index={2}
+        />
+        <PrimaryStat
+          icon={AlertCircle}
+          label="Unpaid Bills"
+          value={stats.unpaidBills}
+          href="/cms/bills"
+          primaryColor={primaryColor}
+          index={3}
+        />
       </div>
 
       {/* ── Charts row ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-        {/* Area chart: submissions trend */}
+        {/* Area chart: revenue & order volume trend */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -420,32 +489,32 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-1">
             <div>
               <h3 className="text-sm font-bold text-gray-800">
-                Submissions — Last 14 Days
+                Revenue & Orders — Last 14 Days
               </h3>
               <p className="text-[11px] text-gray-400 mt-0.5">
-                Contact messages vs. job applications
+                Daily billed revenue vs. order volume
               </p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: primaryColor }} />
-                <span className="text-[11px] text-gray-500 font-medium">Messages</span>
+                <span className="text-[11px] text-gray-500 font-medium">Revenue</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
-                <span className="text-[11px] text-gray-500 font-medium">Applications</span>
+                <span className="text-[11px] text-gray-500 font-medium">Orders</span>
               </div>
             </div>
           </div>
 
           <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={trend} margin={{ top: 16, right: 8, left: -20, bottom: 0 }}>
+            <AreaChart data={trend} margin={{ top: 16, right: 8, left: -4, bottom: 0 }}>
               <defs>
-                <linearGradient id="msgGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="revGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={primaryColor} stopOpacity={0.35} />
                   <stop offset="100%" stopColor={primaryColor} stopOpacity={0} />
                 </linearGradient>
-                <linearGradient id="appGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="ordGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#fbbf24" stopOpacity={0.3} />
                   <stop offset="100%" stopColor="#fbbf24" stopOpacity={0} />
                 </linearGradient>
@@ -458,6 +527,16 @@ export default function DashboardPage() {
                 interval={1}
               />
               <YAxis
+                yAxisId="revenue"
+                tick={{ fontSize: 10, fill: "#9ca3af" }}
+                axisLine={false}
+                tickLine={false}
+                width={40}
+                tickFormatter={(v) => `$${v}`}
+              />
+              <YAxis
+                yAxisId="orders"
+                orientation="right"
                 allowDecimals={false}
                 tick={{ fontSize: 10, fill: "#9ca3af" }}
                 axisLine={false}
@@ -466,24 +545,26 @@ export default function DashboardPage() {
               />
               <Tooltip content={<ChartTooltip primaryColor={primaryColor} />} />
               <Area
+                yAxisId="revenue"
                 type="monotone"
-                dataKey="messages"
+                dataKey="revenue"
                 stroke={primaryColor}
                 strokeWidth={2.5}
-                fill="url(#msgGradient)"
+                fill="url(#revGradient)"
               />
               <Area
+                yAxisId="orders"
                 type="monotone"
-                dataKey="applications"
+                dataKey="orders"
                 stroke="#fbbf24"
                 strokeWidth={2.5}
-                fill="url(#appGradient)"
+                fill="url(#ordGradient)"
               />
             </AreaChart>
           </ResponsiveContainer>
         </motion.div>
 
-        {/* Donut chart: content distribution */}
+        {/* Donut chart: payment method breakdown */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -491,72 +572,80 @@ export default function DashboardPage() {
           className="bg-white rounded-lg border border-gray-100 shadow-sm p-5 flex flex-col"
         >
           <h3 className="text-sm font-bold text-gray-800 mb-1">
-            Content Distribution
+            Payment Methods
           </h3>
           <p className="text-[11px] text-gray-400 mb-2">
-            {totalContent} items across all modules
+            ${stats.totalRevenue.toFixed(2)} collected across {stats.paidBills} paid bill{stats.paidBills !== 1 ? "s" : ""}
           </p>
 
-          <div className="relative flex-1 min-h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={contentDistribution}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={58}
-                  outerRadius={82}
-                  paddingAngle={3}
-                  strokeWidth={0}
-                >
-                  {contentDistribution.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload?.length) return null;
-                    const d = payload[0];
-                    return (
-                      <div className="bg-white rounded-xl shadow-lg border border-gray-100 px-3 py-2 text-xs">
-                        <span className="font-bold text-gray-700">{d.name}</span>
-                        <span className="text-gray-400">: {d.value as number}</span>
-                      </div>
-                    );
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-            {/* Center label */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-2xl font-black text-gray-900">{totalContent}</span>
-              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                Total
-              </span>
+          {paymentDistribution.length === 0 ? (
+            <div className="flex-1 flex flex-col items-center justify-center gap-2 py-10">
+              <Wallet size={28} className="text-gray-200" />
+              <span className="text-[11px] text-gray-400 font-semibold">No paid bills yet</span>
             </div>
-          </div>
-
-          {/* Legend */}
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-3">
-            {contentDistribution.map((d) => (
-              <div key={d.name} className="flex items-center gap-1.5">
-                <span
-                  className="w-2 h-2 rounded-full shrink-0"
-                  style={{ backgroundColor: d.color }}
-                />
-                <span className="text-[11px] text-gray-500 truncate">
-                  {d.name} <span className="font-bold text-gray-700">({d.value})</span>
-                </span>
+          ) : (
+            <>
+              <div className="relative flex-1 min-h-[200px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={paymentDistribution}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={58}
+                      outerRadius={82}
+                      paddingAngle={3}
+                      strokeWidth={0}
+                    >
+                      {paymentDistribution.map((entry) => (
+                        <Cell key={entry.name} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      content={({ active, payload }) => {
+                        if (!active || !payload?.length) return null;
+                        const d = payload[0];
+                        return (
+                          <div className="bg-white rounded-xl shadow-lg border border-gray-100 px-3 py-2 text-xs">
+                            <span className="font-bold text-gray-700">{d.name}</span>
+                            <span className="text-gray-400">: ${Number(d.value).toFixed(2)}</span>
+                          </div>
+                        );
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                {/* Center label */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-2xl font-black text-gray-900">${stats.totalRevenue.toFixed(0)}</span>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                    Revenue
+                  </span>
+                </div>
               </div>
-            ))}
-          </div>
+
+              {/* Legend */}
+              <div className="grid grid-cols-1 gap-y-1.5 mt-3">
+                {paymentDistribution.map((d) => {
+                  const Icon = PAYMENT_ICONS[d.method] || Wallet;
+                  return (
+                    <div key={d.name} className="flex items-center gap-1.5">
+                      <Icon size={11} style={{ color: d.color }} />
+                      <span className="text-[11px] text-gray-500 truncate flex-1">{d.name}</span>
+                      <span className="text-[11px] font-bold text-gray-700">${d.value.toFixed(2)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </motion.div>
       </div>
 
-      {/* ── Bottom row: messages list + mini stats ── */}
+      {/* ── Bottom row: recent bills + mini stats ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-        {/* Recent messages */}
+        {/* Recent bills */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -565,11 +654,11 @@ export default function DashboardPage() {
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
             <div className="flex items-center gap-2">
-              <MessageSquareText size={16} style={{ color: primaryColor }} />
-              <h3 className="text-sm font-bold text-gray-800">Recent Messages</h3>
+              <Receipt size={16} style={{ color: primaryColor }} />
+              <h3 className="text-sm font-bold text-gray-800">Recent Bills</h3>
             </div>
             <Link
-              href="/cms/contacts"
+              href="/cms/bills"
               className="text-[11px] font-bold uppercase tracking-wider hover:underline"
               style={{ color: primaryColor }}
             >
@@ -578,31 +667,42 @@ export default function DashboardPage() {
           </div>
 
           <div className="divide-y divide-gray-50">
-            {recentContacts.length === 0 ? (
+            {recentBills.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 gap-2">
-                <MessageSquareText size={28} className="text-gray-200" />
-                <p className="text-xs text-gray-400">No messages yet.</p>
+                <Receipt size={28} className="text-gray-200" />
+                <p className="text-xs text-gray-400">No bills yet.</p>
               </div>
             ) : (
-              recentContacts.map((c) => (
+              recentBills.map((b) => (
                 <div
-                  key={c.id}
+                  key={b.id}
                   className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 transition-colors"
                 >
                   <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
                     style={{ backgroundColor: primaryColor }}
                   >
-                    {c.name?.[0]?.toUpperCase() ?? "?"}
+                    #{b.id}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[12px] font-bold text-gray-800 truncate">{c.name}</p>
-                    <p className="text-[11px] text-gray-400 truncate">{c.subject}</p>
+                    <p className="text-[12px] font-bold text-gray-800 truncate">
+                      Table {b.table_number ?? "—"} · ${Number(b.grand_total).toFixed(2)}
+                    </p>
+                    <p className="text-[11px] text-gray-400 truncate">
+                      {PAYMENT_LABELS[b.payment_method] || b.payment_method}
+                    </p>
                   </div>
-                  {c.created_at && (
+                  <span
+                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
+                      b.is_paid ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50"
+                    }`}
+                  >
+                    {b.is_paid ? "Paid" : "Unpaid"}
+                  </span>
+                  {b.created_at && (
                     <span className="flex items-center gap-1 text-[10px] text-gray-300 shrink-0">
                       <Clock size={10} />
-                      {format(new Date(c.created_at), "dd MMM")}
+                      {format(new Date(b.created_at), "dd MMM")}
                     </span>
                   )}
                 </div>
@@ -619,20 +719,20 @@ export default function DashboardPage() {
           className="bg-white rounded-lg border border-gray-100 shadow-sm p-3"
         >
           <h3 className="text-sm font-bold text-gray-800 px-2 pt-2 mb-1">
-            All Modules
+            Quick Stats
           </h3>
           <div className="flex flex-col">
-            <MiniStat icon={ImageIcon} label="Gallery" value={stats.gallery} href="/cms/galleries" primaryColor={primaryColor} />
-            <MiniStat icon={SlidersHorizontal} label="Sliders" value={stats.sliders} href="/cms/slider-images" primaryColor={primaryColor} />
-            <MiniStat icon={Users2} label="Team Members" value={stats.team} href="/cms/team-members" primaryColor={primaryColor} />
-            <MiniStat icon={BriefcaseBusiness} label="Total Jobs" value={stats.jobs} href="/cms/jobs-details" primaryColor={primaryColor} />
+            <MiniStat icon={CheckCircle2} label="Paid Bills" value={stats.paidBills} href="/cms/bills" primaryColor={primaryColor} />
+            <MiniStat icon={AlertCircle} label="Unpaid Bills" value={stats.unpaidBills} href="/cms/bills" primaryColor={primaryColor} />
+            <MiniStat icon={XCircle} label="Cancelled Orders" value={stats.cancelledOrders} href="/cms/orders" primaryColor={primaryColor} />
+            <MiniStat icon={Wallet} label="Avg Bill Value" value={`$${stats.avgBillValue.toFixed(2)}`} href="/cms/bills" primaryColor={primaryColor} />
           </div>
         </motion.div>
       </div>
 
       {/* Footer */}
         <p className="text-center border-t border-gray-300 mt-5 text-[11px] text-gray-600 p-4">
-          Arya Tara · CMS · © {new Date().getFullYear()}
+          {restaurant?.title || "Restaurant"} · POS · © {new Date().getFullYear()}
         </p>
     </div>
     </div>

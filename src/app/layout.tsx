@@ -1,35 +1,36 @@
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";import "./globals.css";
+import { Playfair_Display } from "next/font/google";
+import "./globals.css";
 import ClientProviders from "@/components/ClientProvider";
 import GoogleTranslate from "@/components/GoogleTranslate";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
 import { Toaster } from "sonner";
 
-const nunito = Nunito({
-  variable: "--font-nunito",
+const playfair = Playfair_Display({
+  variable: "--font-serif",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://thearyatara.info"),
+  metadataBase: new URL("https://mountcurrypoint.com/"),
   title: {
-    default: "Arya Tara PVT LTD",
+    default: "The Mount Curry Point",
     template: "%s | Arya Tara",
   },
-  description: "Arya Tara PVT LTD - Expert services in Japan and Nepal. Connecting talent with opportunities.",
+  description: "The Mount Curry Point - Expert services in Japan and Nepal. Connecting talent with opportunities.",
   keywords: ["Arya Tara", "Job Agency", "Nepal to Japan", "Career", "Recruitment"],
   authors: [{ name: "Arya Tara" }],
   openGraph: {
-    title: "Arya Tara PVT LTD",
+    title: "The Mount Curry Point",
     description: "Your trusted partner for career opportunities.",
-    url: "https://thearyatara.info",
+    url: "https://mountcurrypoint.com/",
     siteName: "Arya Tara",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arya Tara PVT LTD",
+    title: "The Mount Curry Point",
     description: "Your trusted partner for career opportunities.",
   },
 };
@@ -50,9 +51,9 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Arya Tara PVT LTD",
-    "url": "https://thearyatara.info/",
-    "logo": "https://thearyatara.info/logo.png",
+    "name": "The Mount Curry Point",
+    "url": "https://mountcurrypoint.com/",
+    "logo": "https://mountcurrypoint.com/logo.png",
     "contactPoint": {
       "@type": "ContactPoint",
       "email": "business@thearyatara.info",
@@ -62,7 +63,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${nunito.variable} h-full antialiased`}
+   className={`${playfair.variable} h-full antialiased`}
     >
 
       <head>

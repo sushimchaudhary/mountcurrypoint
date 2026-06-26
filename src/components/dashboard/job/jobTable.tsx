@@ -4,9 +4,9 @@ import { Pencil, Trash2, ChevronLeft, ChevronRight, Inbox, SearchX, Briefcase, D
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { JobServices } from "@/services/jobServices";
 import TableLoadingSkeleton from "../tableLoadingSkeleton";
 import ConfirmModal from "@/components/delete/confirmModel";
+import { JobServices } from "@/services/jobServices";
 
 const PAGE_SIZE = 20;
 

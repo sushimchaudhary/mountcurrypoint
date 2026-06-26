@@ -905,7 +905,7 @@ export default function SettingsDrawer({
               {tResetSettings}
             </button>
 
-            <button
+            {/* <button
               onClick={() => setIsPassModalOpen(true)}
               className="flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-semibold text-slate-700 hover:bg-slate-50 hover:text-amber-600 transition-all group"
             >
@@ -913,7 +913,7 @@ export default function SettingsDrawer({
                 <KeyRound size={14} />
               </div>
               {tChangePassword}
-            </button>
+            </button> */}
 
             <button
               onClick={showLogoutConfirm}

@@ -133,7 +133,7 @@ export default function TopNavbar({
         {/* ── Organization title ── */}
         {organization?.title && (
           <span
-            className={`hidden md:block text-lg font-bold tracking-wide truncate max-w-[200px] ${
+            className={`hidden md:block text-lg font-bold tracking-wide truncate max-w-[250px] ${
               isDarkNav ? "text-white" : "text-slate-800"
             }`}
           >
@@ -141,6 +141,11 @@ export default function TopNavbar({
           </span>
         )}
 
+        
+      </div>
+
+      {/* ── RIGHT ── */}
+      <div className="flex items-center gap-4 overflow-visible relative">
         {/* ── Live date ── */}
         <div className="hidden md:flex items-center gap-2 text-xs font-medium pl-1">
           <Clock
@@ -155,10 +160,6 @@ export default function TopNavbar({
            
           </div>
         </div>
-      </div>
-
-      {/* ── RIGHT ── */}
-      <div className="flex items-center gap-4 overflow-visible relative">
         {/* Language switcher */}
         <div className="relative" ref={langRef}>
           <button

@@ -19,6 +19,10 @@ import {
   SlidersHorizontal,
   UserCog,
   Circle,
+  TableProperties,
+  ShoppingCart,
+  ReceiptText,
+  UtensilsCrossed,
 } from "lucide-react";
 import { useOrganization } from "@/lib/hooks/useOrganization";
 
@@ -62,57 +66,114 @@ type MenuGroup = {
 };
 
 const MENU_GROUPS: MenuGroup[] = [
+  // Dashboard
   {
     groupKey: "dashboard",
     items: [
-      { icon: LayoutDashboard, labelKey: "Dashboard", href: "/cms" },
+      {
+        icon: LayoutDashboard,
+        labelKey: "Dashboard",
+        href: "/cms",
+      },
     ],
   },
+
+  // Website Content
   {
-    groupKey: "content_management",
-    label: "Content Management",
+    groupKey: "website_content",
+    label: "Website Content",
     items: [
       {
         icon: Building2,
         labelKey: "Company",
         children: [
-          { labelKey: "Chairman Message", href: "/cms/chairman-message" },
-          { labelKey: "Overview", href: "/cms/company-overview" },
-          { labelKey: "Strategy", href: "/cms/company-strategy" },
+          {
+            labelKey: "Overview",
+            href: "/cms/company-overview",
+          },
         ],
       },
-      { icon: ImageIcon, labelKey: "Galleries", href: "/cms/galleries" },
-      { icon: FolderKanban, labelKey: "Projects", href: "/cms/project-manage" },
-      { icon: SlidersHorizontal, labelKey: "Slider Images", href: "/cms/slider-images" },
+      {
+        icon: ImageIcon,
+        labelKey: "Gallery",
+        href: "/cms/galleries",
+      },
+      {
+        icon: SlidersHorizontal,
+        labelKey: "Slider Images",
+        href: "/cms/slider-images",
+      },
     ],
   },
+
+  // Restaurant Management
   {
-    groupKey: "hr_and_recruitment",
-    label: "HR & Recruitment",
+    groupKey: "restaurant_management",
+    label: "Restaurant Management",
     items: [
       {
-        icon: BriefcaseBusiness,
-        labelKey: "Jobs",
+        icon: UtensilsCrossed,
+        labelKey: "Menu Management",
         children: [
-          { labelKey: "Manage Jobs", href: "/cms/jobs-details" },
-          { labelKey: "Applications", href: "/cms/job-applications" },
+          {
+            labelKey: "Categories",
+            href: "/cms/category",
+          },
+          {
+            labelKey: "Menu Items",
+            href: "/cms/menu",
+          },
         ],
       },
-      { icon: Users, labelKey: "Team Members", href: "/cms/team-members" },
+      {
+        icon: TableProperties,
+        labelKey: "Tables",
+        href: "/cms/table",
+      },
+      {
+        icon: ShoppingCart,
+        labelKey: "Orders",
+        href: "/cms/order",
+      },
+      {
+        icon: ReceiptText,
+        labelKey: "Bills",
+        href: "/cms/bill",
+      },
     ],
   },
+
+  // Staff Management
   {
-    groupKey: "system_management",
+    groupKey: "staff_management",
+    label: "Staff Management",
+    items: [
+      {
+        icon: Users,
+        labelKey: "Team Members",
+        href: "/cms/team-members",
+      },
+    ],
+  },
+
+  // System Settings
+  {
+    groupKey: "system_settings",
     label: "System Settings",
     items: [
-      { icon: Building2, labelKey: "Organizations", href: "/cms/organizations" },
-      { icon: MessageSquareText, labelKey: "Contact List", href: "/cms/contacts" },
-      { icon: FileText, labelKey: "Legal Docs", href: "/cms/legal-docs" },
-      // { icon: UserCog, labelKey: "User Management", href: "/cms/users" },
+      {
+        icon: Building2,
+        labelKey: "Organization",
+        href: "/cms/organizations",
+      },
+      {
+        icon: MessageSquareText,
+        labelKey: "Contacts",
+        href: "/cms/contacts",
+      },
     ],
   },
 ];
-
 const GROUP_LABELS: Record<string, string> = {
   dashboard: "Main",
   content_management: "Content Management",
@@ -251,14 +312,14 @@ export default function SidebarNav({
               isActive
                 ? "bg-white/20 text-white font-semibold"
                 : isDarkSidebar
-                ? "text-slate-200 hover:text-white hover:bg-white/10"
+                ? "text-slate-100 hover:text-white hover:bg-white/10"
                 : "text-slate-400 hover:text-slate-800 hover:bg-gray-100"
             }`}
           >
             <div className="flex items-center gap-3 min-w-0">
               <item.icon
                 size={16}
-                className={`shrink-0 ${isActive ? "text-white" : "text-slate-300"}`}
+                className={`shrink-0 ${isActive ? "text-white" : "text-slate-100"}`}
               />
               {labelsOn && (
                 <span className={`text-sm truncate ${isActive ? "font-semibold text-white" : ""}`}>
@@ -269,8 +330,8 @@ export default function SidebarNav({
             {labelsOn && (
               <span className="shrink-0">
                 {isSubOpen
-                  ? <ChevronDown size={13} className="text-slate-400" />
-                  : <ChevronRight size={13} className="text-slate-400" />}
+                  ? <ChevronDown size={13} className="text-slate-100" />
+                  : <ChevronRight size={13} className="text-slate-100" />}
               </span>
             )}
           </div>
@@ -289,13 +350,13 @@ export default function SidebarNav({
                         isSubActive
                           ? "bg-white/20 text-white font-semibold"
                           : isDarkSidebar
-                          ? "text-slate-300 hover:text-white hover:bg-white/10"
-                          : "text-slate-500 hover:text-slate-800 hover:bg-gray-100"
+                          ? "text-slate-100 hover:text-white hover:bg-white/10"
+                          : "text-slate-700 hover:text-slate-800 hover:bg-gray-100"
                       }`}
                     >
                       <SubIcon
                         size={13}
-                        className={`shrink-0 ${isSubActive ? "text-white" : "text-slate-400"}`}
+                        className={`shrink-0 ${isSubActive ? "text-white" : "text-slate-100"}`}
                       />
                       <span className="truncate">{subLabel}</span>
                     </div>
@@ -315,13 +376,13 @@ export default function SidebarNav({
             isActive
               ? "bg-white/20 text-white font-semibold"
               : isDarkSidebar
-              ? "text-slate-50 hover:text-white hover:bg-white/10"
-              : "text-slate-600 hover:text-slate-800 hover:bg-gray-100"
+              ? "text-slate-100 hover:text-white hover:bg-white/10"
+              : "text-slate-700 hover:text-slate-800 hover:bg-gray-100"
           }`}
         >
           <item.icon
             size={16}
-            className={`shrink-0 ${isActive ? "text-white" : "text-slate-300"}`}
+            className={`shrink-0 ${isActive ? "text-white" : "text-slate-100"}`}
           />
           {labelsOn && (
             <span className={`text-sm truncate ${isActive ? "font-semibold text-white" : ""}`}>
@@ -387,7 +448,7 @@ export default function SidebarNav({
             {MENU_GROUPS.map((group, gi) => (
               <div key={group.groupKey}>
                 <div className={`${gi === 0 ? "mt-1" : "mt-3"} mb-1`}>
-                  <p className="px-5 text-[10px] font-semibold uppercase tracking-widest text-slate-500 select-none">
+                  <p className="px-5 text-[10px] font-semibold uppercase tracking-widest text-slate-800 select-none">
                     {GROUP_LABELS[group.groupKey] ?? group.label ?? group.groupKey}
                   </p>
                 </div>
