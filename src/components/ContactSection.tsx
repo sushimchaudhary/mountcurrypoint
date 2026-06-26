@@ -96,7 +96,7 @@ export default function ContactSection() {
                 onChange={handleChange}
                 placeholder="Your Name"
                 required
-                className="w-full p-2 bg-gray-100 rounded-sm border border-gray-200 outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                className="w-full p-2 bg-gray-100 rounded-sm border border-gray-200 outline-none focus:ring-1 focus:ring-[#c47c30] transition-all"
               />
               <input
                 type="email"
@@ -105,7 +105,7 @@ export default function ContactSection() {
                 onChange={handleChange}
                 placeholder="Your Email"
                 required
-                className="w-full p-2 bg-gray-100 rounded-sm border border-gray-200 outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                className="w-full p-2 bg-gray-100 rounded-sm border border-gray-200 outline-none focus:ring-1 focus:ring-[#c47c30] transition-all"
               />
               <input
                 type="tel"
@@ -114,7 +114,7 @@ export default function ContactSection() {
                 onChange={handleChange}
                 placeholder="Phone Number"
                 required
-                className="w-full p-2 bg-gray-100 rounded-sm border border-gray-200 outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                className="w-full p-2 bg-gray-100 rounded-sm border border-gray-200 outline-none focus:ring-1 focus:ring-[#c47c30] transition-all"
               />
               <input
                 type="text"
@@ -123,7 +123,7 @@ export default function ContactSection() {
                 onChange={handleChange}
                 placeholder="Subject"
                 required
-                className="w-full p-2 bg-gray-100 rounded-sm border border-gray-200 outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                className="w-full p-2 bg-gray-100 rounded-sm border border-gray-200 outline-none focus:ring-1 focus:ring-[#c47c30] transition-all"
               />
             </div>
 
@@ -134,7 +134,7 @@ export default function ContactSection() {
               placeholder="Message"
               rows={4}
               required
-              className="w-full mt-3 p-2 bg-gray-100 rounded-sm border border-gray-200 outline-none focus:ring-2 focus:ring-green-500 transition-all"
+              className="w-full mt-3 p-2 bg-gray-100 rounded-sm border border-gray-200 outline-none focus:ring-1 focus:ring-[#c47c30] transition-all"
             />
 
             {/* Success / Error feedback — same layout, no extra UI */}

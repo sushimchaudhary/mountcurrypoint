@@ -96,11 +96,11 @@ export default function TestimonialsSection() {
   const centerIndex = getCenterIndex();
 
   return (
-    <section className="py-20 bg-white overflow-hidden">
+    <section className="py-1 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-16">
-          <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6D4C37]">
+          <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#c47c30]">
             Testimonials
           </span>
           <h2 className="text-4xl sm:text-5xl  text-[#1b2a2f] font-bold mt-4">
@@ -175,7 +175,7 @@ export default function TestimonialsSection() {
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <Link
             href="/about-us"
-            className="hidden md:inline-flex bg-[#6D4C37] text-white px-8 py-4 font-bold text-xs uppercase tracking-widest hover:bg-[#e0961f] transition-colors"
+            className="hidden md:inline-flex bg-[#c47c30] text-white px-8 py-4 font-bold text-xs uppercase tracking-widest hover:bg-[#e0961f] transition-colors"
           >
             More About Us
           </Link>
@@ -193,7 +193,7 @@ export default function TestimonialsSection() {
                 className={`tsm-prev p-3 transition-colors ${
                   isBeginning
                     ? "bg-gray-100 text-gray-300 cursor-not-allowed"
-                    : "bg-gray-100 hover:bg-[#6D4C37] hover:text-white text-[#1b2a2f]"
+                    : "bg-gray-100 hover:bg-[#c47c30] hover:text-white text-[#1b2a2f]"
                 }`}
               >
                 <FaArrowLeft />
@@ -204,7 +204,7 @@ export default function TestimonialsSection() {
                 className={`tsm-next p-3 transition-colors ${
                   isEnd
                     ? "bg-gray-200 text-gray-300 cursor-not-allowed"
-                    : "bg-[#6D4C37] text-white hover:bg-[#6D4C37]"
+                    : "bg-[#c47c30] text-white hover:bg-[#c47c30]"
                 }`}
               >
                 <FaArrowRight />
@@ -226,7 +226,7 @@ export default function TestimonialsSection() {
           transition: all 0.3s ease;
         }
         .tsm-bullet-active {
-          background: #6D4C37;
+          background: #c47c30;
           width: 24px;
         }
         .tsm-card {
@@ -266,7 +266,7 @@ function TestimonialCard({ testimonial: t, isActive }: TestimonialCardProps) {
     >
       <span
   aria-hidden="true"
-  className="tsm-quote absolute -top-12 right-8 text-[#6D4C37] text-[150px] leading-none opacity-0 transition-all duration-500 select-none pointer-events-none transform rotate-[30deg]"
+  className="tsm-quote absolute -top-12 right-8 text-[#c47c30] text-[150px] leading-none opacity-0 transition-all duration-500 select-none pointer-events-none transform rotate-[30deg]"
 >
   "
 </span>

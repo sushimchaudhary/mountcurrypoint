@@ -302,7 +302,7 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
     <Shell>
       <div className="pb-20">
         {/* Header */}
-        <header className="px-5 pt-5 pb-4 bg-[#fcf7f2] sticky top-0 z-20 flex items-start justify-between gap-3">
+        <header className="px-5 pt-5 pb-4 sticky top-0 z-20 flex items-start justify-between gap-3">
           <div>
             {tableNumber && tableValid && (
               <>
@@ -354,7 +354,7 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
         </header>
 
         {/* Category pills */}
-        <div className="flex gap-2 overflow-x-auto px-5 pb-3 scrollbar-hide sticky top-[81] bg-[#fcf7f2] z-20 border-b border-[#e8dccd]">
+        <div className="flex gap-2 overflow-x-auto px-5 pb-3 scrollbar-hide sticky top-[81]  z-20 border-b border-[#e8dccd]">
           <button
             onClick={() => setActiveCategory("all")}
             className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-bold transition-colors ${

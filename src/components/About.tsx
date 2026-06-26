@@ -72,7 +72,7 @@ export default function AboutSection() {
         {/* Left Side: Image */}
         <motion.div
           variants={itemVariants}
-          className="relative aspect-[4/3] w-full shadow-xl"
+          className="relative aspect-[3/3] w-full shadow-xl"
         >
           <Image
             src={overview?.company_img || "/placeholder.jpg"}

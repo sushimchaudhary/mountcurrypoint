@@ -148,7 +148,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           <div className="w-20 h-20 rounded-full overflow-hidden border border-slate-200 shadow-sm relative z-10">
             <Image src="/logo.png" alt="Loading..." width={80} height={80} className="w-full h-full object-cover" />
           </div>
-          <div className="absolute w-24 h-24 border-4 border-transparent border-t-[#2b98e1] rounded-full animate-spin" />
+          <div className="absolute w-24 h-24 border-4 border-transparent border-t-[#c47c30] rounded-full animate-spin" />
         </div>
       </div>    
       ) : (

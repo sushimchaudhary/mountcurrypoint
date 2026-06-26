@@ -154,7 +154,7 @@ useEffect(() => {
             Developed by
             <Link
               href="https://sempatech.com"
-              className="ml-1 font-semibold hover:text-yellow-300 transition-colors"
+              className="ml-1 font-semibold hover:text-cyan-500 hover:underline transition-colors"
             >
               Sempa Tech
             </Link>

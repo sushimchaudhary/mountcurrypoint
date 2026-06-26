@@ -115,12 +115,8 @@ export default function ResetPassword({ params }: PageProps) {
         <div className="bg-white rounded-md shadow-2xl overflow-hidden border border-gray-100">
 
           {/* Top accent bar */}
-          <div
-            style={{
-              height: 4,
-              background: `linear-gradient(90deg, ${primaryColor}, ${hexToRgba(primaryColor, 0.5)})`,
-            }}
-          />
+           <div className="border-t-4 border-[#c47c30]"    
+        />
 
           <div className="px-4  pb-4">
 
@@ -129,7 +125,7 @@ export default function ResetPassword({ params }: PageProps) {
                         className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-2 shadow-sm"
                         style={{ backgroundColor: `${primaryColor}10` }}
                       >
-                        <Image src="/edify.png" alt="login icon" width={54} height={54} />
+                        <Image src="/logo.png" alt="login icon" width={54} height={54} />
           
                       </div>
                       <h1 className="text-[18px] font-extrabold text-[#1e293b] tracking-tight uppercase">
@@ -274,10 +270,10 @@ export default function ResetPassword({ params }: PageProps) {
 
               {/* Submit */}
               <div className="pt-1">
-                <ThemedButton
+                <button
                   type="submit"
                   disabled={loading || status?.type === "success"}
-                  className="w-full py-2 flex items-center justify-center gap-2 text-[12px] font-semibold rounded"
+                  className="w-full flex items-center justify-center gap-2 text-[12px] font-semibold rounded shadow-md bg-[#c47c30] hover:bg-[#a86a28] text-white py-2"
                 >
                   {loading ? (
                     <>
@@ -290,7 +286,7 @@ export default function ResetPassword({ params }: PageProps) {
                       <span>Reset Password</span>
                     </>
                   )}
-                </ThemedButton>
+                </button>
               </div>
             </form>
 

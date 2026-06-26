@@ -45,11 +45,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md bg-white rounded-md shadow-xl overflow-hidden border border-gray-100">
         
         {/* Top Accent Bar */}
-        <div
-          style={{
-            height: 4,
-            background: `linear-gradient(90deg, ${primaryColor}, ${hexToRgba(primaryColor, 0.5)})`,
-          }}
+        <div className="border-t-4 border-[#c47c30]"    
         />
 
         {/* Card Header */}
@@ -58,7 +54,7 @@ export default function ForgotPasswordPage() {
                         className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-2 shadow-sm"
                         style={{ backgroundColor: `${primaryColor}10` }}
                       >
-                        <Image src="/edify.png" alt="login icon" width={54} height={54} />
+                        <Image src="/logo.png" alt="login icon" width={54} height={54} />
           
                       </div>
           <h1 className="text-xl font-bold text-slate-800">Forgot Password?</h1>
@@ -85,9 +81,9 @@ export default function ForgotPasswordPage() {
                 />
               </div>
 
-              <ThemedButton
+              <button
                 type="submit"
-                className="w-full py-2 flex items-center justify-center gap-2 rounded font-bold"
+  className="w-full mt-4 text-sm font-bold shadow-md bg-[#c47c30] hover:bg-[#a86a28] text-white py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
                 disabled={loading}
               >
                 {loading ? (
@@ -98,7 +94,7 @@ export default function ForgotPasswordPage() {
                     <ArrowRight size={18} />
                   </>
                 )}
-              </ThemedButton>
+              </button>
 
               <div className="text-center mt-4">
                 <Link 
