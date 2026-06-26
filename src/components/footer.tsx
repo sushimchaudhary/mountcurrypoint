@@ -41,7 +41,7 @@ export default function Footer() {
 
   return (
     <div className="w-full mx-auto">
-      <footer className="bg-[#007f35] text-white pt-12 pb-6 px-4 md:px-12">
+      <footer className="bg-[#6d4c37] text-white pt-12 pb-6 px-4 md:px-12">
        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-12">
           {/* ── Organization info ── */}
           <div className="col-span-2 lg:col-span-1 space-y-4">
@@ -132,7 +132,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="w-10 h-10 border border-white/30 rounded-full flex items-center justify-center hover:bg-white hover:text-[#007f35] transition-all duration-300 hover:scale-110"
+                  className="w-10 h-10 border border-white/30 rounded-full flex items-center justify-center hover:bg-white hover:text-[#6d4c37] transition-all duration-300 hover:scale-110"
                 >
                   <Icon size={18} />
                 </a>

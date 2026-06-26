@@ -101,7 +101,7 @@ export default function Navbar() {
               )}
             </div>
             <div className="hidden md:flex flex-col leading-tight">
-              <span className="text-base lg:text-lg font-extrabold text-amber-600 tracking-tight">
+              <span className="text-base lg:text-lg font-extrabold text-[#6d4c37] tracking-tight">
                 {orgDetails?.title || "The Mount Curry Point"}
               </span>
             </div>
@@ -117,13 +117,13 @@ export default function Navbar() {
                   href={link.href}
                   className={`relative px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors rounded-lg ${
                     isActive
-                      ? "text-[#E3591E] bg-orange-50"
-                      : "text-[#5b351e] hover:text-[#E3591E] hover:bg-green-50"
+                      ? "text-[#6d4c37] bg-orange-50"
+                      : "text-[#5b351e] hover:text-[#6d4c37] hover:bg-green-50"
                   }`}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-[#E3591E]" />
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-[#6d4c37]" />
                   )}
                 </Link>
               );
@@ -191,7 +191,7 @@ export default function Navbar() {
                 href={link.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wide transition-colors ${
                   isActive
-                    ? "bg-green-50 text-[#E3591E]"
+                    ? "bg-green-50 text-[#6d4c37]"
                     : "text-[#5b351e] hover:bg-amber-50 hover:text-amber-700"
                 }`}
               >
