@@ -29,7 +29,7 @@ export default function ContactSection() {
   const [error, setError] = useState<string | null>(null);
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
@@ -57,19 +57,17 @@ export default function ContactSection() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8 }}
-      className="py-8 md:px-12 px-4"
+      className="py-2 md:px-12 px-4"
     >
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-5 items-center">
-
         {/* Left Side: Map — uses location_url from API */}
         <div className="w-full h-[500] rounded-xl overflow-hidden border border-gray-100">
           <iframe
-            src={
-              organization?.location_url || "google map"
-            }
+            // language लाई URL भित्रै पठाउनुहोस्
+            src={`${organization?.location_url}${organization?.location_url?.includes("?") ? "&" : "?"}hl=en&gl=us`}
             width="100%"
             height="100%"
-            style={{ border: 0 }}
+            style={{ border: 0 }} // style मा संख्या मात्र नराख्नुहोस्, 0 वा 'none' राख्नुहोस्
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />

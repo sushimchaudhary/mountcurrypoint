@@ -91,7 +91,7 @@ function MenuCard({ item }: { item: any }) {
       whileHover={{ y: -5, transition: { duration: 0.18 } }}
       className="bg-white rounded-lg border border-[#e8dccd] overflow-hidden flex flex-col shadow-sm hover:shadow-lg transition-shadow group"
     >
-      <div className="relative h-44 w-full bg-[#fcf7f2] overflow-hidden">
+      <div className="relative h-44 w-full  overflow-hidden">
         {item.image ? (
           <img
             src={item.image}
@@ -147,14 +147,14 @@ function MenuPage() {
       : menuItems.filter((m) => m.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-[#fcf7f2]">
+    <div className="min-h-screen  py-18  ">
 
       {/* ── Page hero header ─────────────────────────────────── */}
       <motion.div
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="max-w-7xl mx-auto px-6 pt-14 pb-6"
+        className="max-w-7xl mx-auto px-6 pt-14 pb-6  "
       >
       <motion.div variants={itemVariants} className="flex items-center gap-3 mb-3">
         <div className="w-8 h-[2px] bg-[#c47c30]" />

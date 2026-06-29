@@ -42,17 +42,18 @@ export default function LandingPage() {
 
         <MenuItemsSection/>
         </section>
-        <section className="bg-white py-10">
+        
+        {/* <section className="bg-white py-10">
           <TestimonialsSection />
-        </section>
+        </section> */}
 
-        <section className="bg-white py-10">
+        <section className="bg-[#E88924]/20">
           <SliderCoverflow />
         </section>
 
-        <section className="bg-orange-50/50 py-10">
+        {/* <section className="bg-orange-50/50 py-10">
           <TeamMember />
-        </section>
+        </section> */}
         
         <section className="bg-white py-16">
           <ContactSection />

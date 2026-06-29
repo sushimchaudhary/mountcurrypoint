@@ -94,36 +94,13 @@ useEffect(() => {
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-8">
-          <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#c47c30]">
-            Reviews
-          </span>
+         
           <h2 className="text-4xl font-bold text-[#1b2a2f] mt-2">
             What Our Visitors Say
           </h2>
         </div>
 
-        {/* Place badge */}
-        <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 mb-5">
-          <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-lg shrink-0">
-            📍
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-[#1b2a2f] truncate">
-              {place?.name ?? "The Mount Curry Point"}
-            </p>
-            <p className="text-xs text-gray-400">
-              Restaurant · Google Maps Reviews
-            </p>
-          </div>
-          <a
-            href={`https://www.google.com/maps/place/?q=place_id:${PLACE_ID}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-[#c47c30] flex items-center gap-1 shrink-0 hover:underline"
-          >
-            View on map →
-          </a>
-        </div>
+       
 
         {/* Rating summary */}
         {place && (

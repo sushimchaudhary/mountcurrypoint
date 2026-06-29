@@ -16,7 +16,6 @@ const TwitterIcon = ({ size }: { size?: number }) => (
 
 export default function Footer() {
   const { organization } = useOrganization();
-  const [projects, setProjects] = useState<{ title: string; url: string }[]>([]);
   const [categories, setCategories] = useState<{ name: string }[]>([]);
 
 useEffect(() => {

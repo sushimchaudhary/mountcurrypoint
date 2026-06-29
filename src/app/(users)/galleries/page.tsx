@@ -412,7 +412,7 @@ export default function GalleryPage() {
     <div className="max-w-7xl mx-auto">
 
 
-      <section className="px-4 md:px-12 py-14">
+      <section className="px-4 md:px-12 py-28">
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

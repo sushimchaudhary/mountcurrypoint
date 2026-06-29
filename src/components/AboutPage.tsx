@@ -29,7 +29,7 @@ interface Organization {
   linkdin_url: string;
 }
 
-export default function AboutSection() {
+export default function AboutPage() {
   const [overview, setOverview] = useState<Overview | null>(null);
   const [org, setOrg] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,7 +66,7 @@ export default function AboutSection() {
       whileInView="visible"
       viewport={{ once: true, amount: 0.1 }}
       variants={containerVariants}
-      className="max-w-7xl mx-auto px-6 py-2"
+      className="max-w-7xl mx-auto px-6 md:py-34 py-28"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
         {/* Left Side: Image */}

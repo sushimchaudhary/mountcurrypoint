@@ -1,4 +1,4 @@
-import AboutSection from "@/components/About";
+import AboutPage from "@/components/AboutPage";
 import { CompanyOverviewServices } from "@/services/companyoverviewServices";
 
 export async function generateMetadata() {
@@ -8,8 +8,8 @@ export async function generateMetadata() {
   };
 }
 
-export default async function AboutPage() {
+export default async function Page() {
 
 
-  return <AboutSection />;
+  return <AboutPage />;
 }

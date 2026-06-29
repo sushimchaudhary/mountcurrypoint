@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       // You can define your theme colors or fonts here
       colors: {
-        primary: "#22c55e", // Example: match your green branding
+        primary: "#fae7d3", // Example: match your green branding
       },
     },
   },
