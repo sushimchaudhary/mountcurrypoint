@@ -138,7 +138,7 @@ export default function HeroBanner() {
         >
           <Link
             href="/menu-items"
-            className="group inline-flex items-center gap-2.5 bg-[#c47c30] hover:bg-[#d4892f] text-white font-bold text-[12px] tracking-[0.15em] uppercase px-6 py-2 rounded-full transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] shadow-lg shadow-[#c47c30]/25"
+            className="group inline-flex items-center gap-2.5 bg-[#c47c30] hover:bg-[#d4892f] text-white font-bold text-[12px] tracking-[0.15em] uppercase px-6 py-4 rounded-full transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] shadow-lg shadow-[#c47c30]/25"
           >
             View Menu
             <ArrowRight
@@ -149,7 +149,7 @@ export default function HeroBanner() {
 
           <Link
             href="/contact"
-            className="group inline-flex items-center gap-2.5 font-bold text-[12px] tracking-[0.15em] uppercase px-6 py-2 rounded-full transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] border border-white/20 hover:border-[#c47c30]/50 text-[#f5ede0]/80 hover:text-[#ed7e07]"
+            className="group inline-flex items-center gap-2.5 font-bold text-[12px] tracking-[0.15em] uppercase px-6 py-4 rounded-full transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] border border-white/20 hover:border-[#c47c30]/50 text-[#f5ede0]/80 hover:text-[#ed7e07]"
           >
             Contact Us
           </Link>
