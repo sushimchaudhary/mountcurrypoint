@@ -56,23 +56,27 @@ export default function TestimonialsSection() {
   const [error, setError] = useState<string | null>(null);
   const [likedMap, setLikedMap] = useState<Record<number, boolean>>({});
 
-  useEffect(() => {
-    async function fetchReviews() {
-      try {
-        const res = await fetch(
-          `/api/google-reviews?place_id=${PLACE_ID}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch reviews");
-        const data = await res.json();
-        setPlace(data);
-      } catch (err: any) {
-        setError(err.message ?? "Unknown error");
-      } finally {
-        setLoading(false);
+useEffect(() => {
+  async function fetchReviews() {
+    try {
+      // API Route लाई सहि तरिकाले कल गर्नुहोस्
+      const res = await fetch(`/api/google-reviews?place_id=${PLACE_ID}`);
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to fetch reviews");
       }
+      
+      const data = await res.json();
+      setPlace(data); // यहाँ data मा सिधै result आउँछ
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    fetchReviews();
-  }, []);
+  }
+  fetchReviews();
+}, []);
 
   const ratingCounts = [5, 4, 3, 2, 1].map((star) => ({
     star,
