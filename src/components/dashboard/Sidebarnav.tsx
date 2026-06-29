@@ -91,9 +91,8 @@ const MENU_GROUPS: MenuGroup[] = [
             labelKey: "Overview",
             href: "/cms/company-overview",
           },
-        ],
-      },
-      {
+
+          {
         icon: ImageIcon,
         labelKey: "Gallery",
         href: "/cms/galleries",
@@ -103,6 +102,9 @@ const MENU_GROUPS: MenuGroup[] = [
         labelKey: "Slider Images",
         href: "/cms/slider-images",
       },
+        ],
+      },
+      
     ],
   },
 
