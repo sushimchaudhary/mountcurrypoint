@@ -1,46 +1,63 @@
+"use client"
 import AboutSection from "@/components/About";
-import BoardOfDirectors from "@/components/BoardOfDirectors";
+import TeamMember from "@/components/BoardOfDirectors";
 import ContactSection from "@/components/ContactSection";
 import HeroBanner from "@/components/Hero";
-import MenuPage from "@/components/menu/MenuPage";
-import ProjectsPreview from "@/components/ProjectPreview";
+import MenuItemsSection from "@/components/menuItemsSection";
 import ScrollToTop from "@/components/ScrollTop";
 import SliderCoverflow from "@/components/Slider";
 import TestimonialsSection from "@/components/TestimonialsSection";
-
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 export default function LandingPage() {
+  const containerRef = useRef(null);
+  
+  // Scroll track garne
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
+
+  // Scroll sangai opacity 1 bata 0 hunchha
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
+
   return (
-    <main >
-      {/* 1. First Impression: Clear and Bold */}
-      <HeroBanner />
+    <main ref={containerRef} className="relative">
+      
+      {/* 1. HeroBanner with motion */}
+      <motion.div 
+        style={{ opacity, scale }} 
+        className="sticky top-0 z-0 h-screen w-full"
+      >
+        <HeroBanner />
+      </motion.div>
 
-      {/* 2. Story: About Us (Light Background) */}
-      <section className="bg-white">
-        <AboutSection />
-      </section>
+      {/* 2. Content Wrapper */}
+      <div className="relative  bg-white  -mt-1 pt-16 rounded-t-4xl shadow-[0_-20px_40px_-10px_rgba(0,0,0,0.1)] z-20" >
+        
+          <AboutSection />
 
-      {/* 3. Proof: Showcase your work (Subtle Grey Background) */}
-      <section className="bg-orange-50/50 py-4">
-        <MenuPage/>
-      </section>
+        <section className="bg-orange-50/50 py-16">
 
-     <section className="bg-white">
-        <TestimonialsSection />
-      </section>
-      {/* 4. Experience: Slider (Visual delight) */}
-      <section className="bg-white py-4">
-        <SliderCoverflow />
-      </section>
+        <MenuItemsSection/>
+        </section>
+        <section className="bg-white py-10">
+          <TestimonialsSection />
+        </section>
 
-      {/* 5. Authority: Trust & People (Soft Green tint to reflect growth) */}
-      <section className="bg-orange-50/50 py-4">
-        <BoardOfDirectors />
-      </section>
+        <section className="bg-white py-10">
+          <SliderCoverflow />
+        </section>
 
-      {/* 6. Action: Contact (Final punchline) */}
-      <section className="bg-white py-4">
-        <ContactSection />
-      </section>
+        <section className="bg-orange-50/50 py-10">
+          <TeamMember />
+        </section>
+        
+        <section className="bg-white py-16">
+          <ContactSection />
+        </section>
+      </div>
 
       <ScrollToTop />
     </main>

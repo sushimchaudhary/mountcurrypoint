@@ -80,22 +80,32 @@ export function MemberCard({
   );
 }
 
-export default function BoardOfDirectors() {
+export default function TeamMember() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    TeamServices.getDetails()
-      .then((data) => {
-        const list: TeamMember[] = Array.isArray(data) ? data : [];
-        setMembers(list.sort((a, b) => a.order - b.order));
-      })
-      .catch((err) => setError(TeamServices.parseError(err)))
-      .finally(() => setLoading(false));
-  }, []);
+      useEffect(() => {
+          TeamServices.getDetails()
+            .then((data) => {
+              const list: TeamMember[] = Array.isArray(data) ? data : [];
+              setMembers(list.sort((a, b) => a.order - b.order));
+            })
+            .catch((err) => setError(TeamServices.parseError(err)))
+            .finally(() => setLoading(false));
+        }, []);
 
-  const preview = members.slice(0, 5);
+        // ── Guard Clause: Yedi loading chaina ra members list khali chha bhane, 
+        // kehi pani (null) return garne.
+        if (!loading && members.length === 0) {
+          return null;
+        }
+
+        // Yedi error chha bhane ni section dekhina bhane yo line pani hatauna saknu hunchha 
+        // athawa error lai matra handle garna saknu hunchha.
+        if (error) return null; 
+
+        const preview = members.slice(0, 5);
 
   return (
     <section className=" max-w-full mx-auto px-6 py-16 md:px-16 md:py-20">

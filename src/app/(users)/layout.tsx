@@ -16,10 +16,10 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <>
-      {!hideLayout && (
-        <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+{!hideLayout && (
+       
           <Navbar />
-        </header>
+       
       )}
 
       <main>{children}</main>

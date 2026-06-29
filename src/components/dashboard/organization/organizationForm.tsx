@@ -167,8 +167,7 @@ export default function OrganizationForm({ initialData, onSuccess, onClose, isOp
                       placeholder="98XXXXXXXX"
                       icon={<Phone size={12} />}
                       rules={{
-                        required: "Contact number is required",
-                        pattern: { value: /^[0-9]{10}$/, message: "Must be exactly 10 digits" },
+                        pattern: { value: /^[0-9]{7,15}$/, message: "Must be exactly contact number" },
                       }}
                     />
                   </div>
@@ -191,7 +190,7 @@ export default function OrganizationForm({ initialData, onSuccess, onClose, isOp
                       placeholder="01XXXXXXX"
                       icon={<Phone size={12} />}
                       rules={{
-                        pattern: { value: /^[0-9]{7,10}$/, message: "Invalid telephone number" },
+                        pattern: { value: /^[0-9]{7,15}$/, message: "Invalid telephone number" },
                       }}
                     />
                   </div>

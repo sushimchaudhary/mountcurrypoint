@@ -26,6 +26,8 @@
   display: none !important;
 }
 
+
+
 body {
   font-family: var(--font-serif);
   background: var(--background);
@@ -124,3 +126,5 @@ body {
     display: flex !important;
     justify-content: center !important;
 }
+
+

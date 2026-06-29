@@ -66,7 +66,7 @@ export default function AboutSection() {
       whileInView="visible"
       viewport={{ once: true, amount: 0.1 }}
       variants={containerVariants}
-      className="max-w-7xl mx-auto px-6 py-24"
+      className="max-w-7xl mx-auto px-6 py-20"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
         {/* Left Side: Image */}

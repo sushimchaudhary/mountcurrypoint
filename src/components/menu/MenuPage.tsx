@@ -453,7 +453,6 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
                     </button>
                   ) : (
                    <div className="flex items-center justify-between bg-[#fcf7f2] rounded-full p-1 border">
-                    {/* Minus Button - Rounded Full */}
                     <button 
                       onClick={() => updateLineQty(key, -1)} 
                       className="p-1 rounded-full bg-white text-[#241712] shadow-sm active:scale-90 transition-transform"
@@ -463,7 +462,6 @@ const sortedOrders = [...todayOrders].sort((a, b) => {
                     
                     <span className="px-3 text-sm font-bold">{qty}</span>
                     
-                    {/* Plus Button - Rounded Full */}
                     <button 
                       onClick={() => addToCart(item)} 
                       className="p-1 rounded-full bg-[#c47c30] text-white shadow-sm active:scale-90 transition-transform"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, A11y } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -25,45 +25,52 @@ interface TestimonialCardProps {
   isActive: boolean;
 }
 
-const testimonials: Testimonial[] = [
-  {
-    name: "Viktoria Freeman",
-    title: "I'm delighted!",
-    date: "02.02.21",
-    img: "/avatar1.jpg",
-    text: "The ambiance was stunning and the food exceeded every expectation. I left with a full heart and an even fuller stomach.",
-  },
-  {
-    name: "Paul Trueman",
-    title: "I will visit again.",
-    date: "02.02.21",
-    img: "/avatar2.jpg",
-    text: "Every dish was crafted with care. The staff made us feel right at home — we'll definitely be back for more.",
-  },
-  {
-    name: "Oscar Oldman",
-    title: "The best restaurant!",
-    date: "02.02.21",
-    img: "/avatar3.jpg",
-    text: "An unforgettable dining experience from start to finish. The flavors were bold and the service was impeccable.",
-  },
-  {
-    name: "Jane Doe",
-    title: "Amazing food!",
-    date: "03.02.21",
-    img: "/avatar1.jpg",
-    text: "I rarely leave reviews, but this place deserves it. The seasonal menu is inspired and every bite tells a story.",
-  },
-  {
-    name: "Mark Wilson",
-    title: "Truly exceptional!",
-    date: "04.02.21",
-    img: "/avatar2.jpg",
-    text: "World-class cuisine in a warm and welcoming atmosphere. This is the kind of place you take someone to impress.",
-  },
-];
+interface GoogleReview {
+  author_name: string;
+  text: string;
+  profile_photo_url: string;
+}
+
+// const testimonials: Testimonial[] = [
+//   {
+//     name: "Viktoria Freeman",
+//     title: "I'm delighted!",
+//     date: "02.02.21",
+//     img: "/avatar1.jpg",
+//     text: "The ambiance was stunning and the food exceeded every expectation. I left with a full heart and an even fuller stomach.",
+//   },
+//   {
+//     name: "Paul Trueman",
+//     title: "I will visit again.",
+//     date: "02.02.21",
+//     img: "/avatar2.jpg",
+//     text: "Every dish was crafted with care. The staff made us feel right at home — we'll definitely be back for more.",
+//   },
+//   {
+//     name: "Oscar Oldman",
+//     title: "The best restaurant!",
+//     date: "02.02.21",
+//     img: "/avatar3.jpg",
+//     text: "An unforgettable dining experience from start to finish. The flavors were bold and the service was impeccable.",
+//   },
+//   {
+//     name: "Jane Doe",
+//     title: "Amazing food!",
+//     date: "03.02.21",
+//     img: "/avatar1.jpg",
+//     text: "I rarely leave reviews, but this place deserves it. The seasonal menu is inspired and every bite tells a story.",
+//   },
+//   {
+//     name: "Mark Wilson",
+//     title: "Truly exceptional!",
+//     date: "04.02.21",
+//     img: "/avatar2.jpg",
+//     text: "World-class cuisine in a warm and welcoming atmosphere. This is the kind of place you take someone to impress.",
+//   },
+// ];
 
 export default function TestimonialsSection() {
+const [googleReviews, setGoogleReviews] = useState<GoogleReview[]>([]);
   const swiperRef = useRef<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [slidesPerView, setSlidesPerView] = useState(1);
@@ -82,6 +89,16 @@ export default function TestimonialsSection() {
     setIsEnd(swiper.isEnd);
   }, []);
 
+
+ useEffect(() => {
+  fetch('/api/reviews')
+    .then(res => res.json())
+    .then(data => {
+      console.log("API बाट आएको डेटा:", data); // यहाँ हेर्नुहोस्
+      setGoogleReviews(data);
+    })
+    .catch(err => console.error("Fetch error:", err));
+}, []);
   /**
    * Compute the center slide index based on how many slides are visible.
    *   1 visible  → highlight index 0 (the only one)
@@ -109,67 +126,27 @@ export default function TestimonialsSection() {
         </div>
 
         {/* Slider */}
-        <div className="relative">
-          <Swiper
-            modules={[Navigation, Pagination, A11y]}
-            onSwiper={(swiper: SwiperType) => {
-              swiperRef.current = swiper;
-              updateState(swiper);
-            }}
-            onSlideChange={(swiper: SwiperType) => updateState(swiper)}
-            onBreakpoint={(swiper: SwiperType) => updateState(swiper)}
-            onReachBeginning={() => setIsBeginning(true)}
-            onReachEnd={() => setIsEnd(true)}
-            onFromEdge={() => {
-              setIsBeginning(false);
-              setIsEnd(false);
-            }}
-            slidesPerView={1}
-            spaceBetween={16}
-            centeredSlides={false}
-            breakpoints={{
-              0: {
-                slidesPerView: 1,
-                spaceBetween: 16,
-              },
-              640: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 3,
-                spaceBetween: 28,
-              },
-            }}
-            navigation={{
-              nextEl: ".tsm-next",
-              prevEl: ".tsm-prev",
-              disabledClass: "tsm-nav-disabled",
-            }}
-            pagination={{
-              el: ".tsm-pagination",
-              clickable: true,
-              bulletClass: "tsm-bullet",
-              bulletActiveClass: "tsm-bullet-active",
-            }}
-            loop={false}
-            className="overflow-visible! pb-4"
-            a11y={{
-              prevSlideMessage: "Previous testimonial",
-              nextSlideMessage: "Next testimonial",
-            }}
-          >
-            {testimonials.map((t, i) => (
-              <SwiperSlide key={i} className="h-auto py-6">
-                {/* Use our own centerIndex — NOT Swiper's isActive prop */}
-                <TestimonialCard
-                  testimonial={t}
-                  isActive={i === centerIndex}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+{/* Slider - यहाँ array चेक थप्नुहोस् */}
+<div className="relative">
+  {Array.isArray(googleReviews) && googleReviews.length > 0 ? (
+    googleReviews.map((review, i) => (
+      <SwiperSlide key={i}>
+        <TestimonialCard 
+          testimonial={{
+            name: review.author_name || "Anonymous",
+            text: review.text || "",
+            img: review.profile_photo_url || "/placeholder.jpg",
+            date: "Google Review",
+            title: "Verified Review"
+          }} 
+          isActive={i === centerIndex}
+        />
+      </SwiperSlide>
+    ))
+  ) : (
+    <p className="text-center text-gray-500">Loading reviews or no reviews found...</p>
+  )}
+</div>
 
         {/* Footer Controls */}
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6">
