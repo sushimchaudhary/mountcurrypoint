@@ -295,8 +295,8 @@ export default function SidebarNav({
   const renderItem = (item: MenuItem, hoverMode = false) => {
     const label = item.labelKey;
     const isActive = item.href
-      ? item.href === "/dashboard"
-        ? pathname === "/dashboard"
+      ? item.href === "/cms"
+        ? pathname === "/cms"
         : pathname === item.href || pathname.startsWith(item.href + "/")
       : false;
     const hasChildren = !!item.children?.length;

@@ -445,7 +445,7 @@ export default function DashboardPage() {
           icon={DollarSign}
           label="Today's Revenue"
           value={`$${stats.todayRevenue.toFixed(2)}`}
-          href="/cms/bills"
+          href="/cms/bill"
           trend={stats.revenueTrend}
           primaryColor={primaryColor}
           index={0}
@@ -454,7 +454,7 @@ export default function DashboardPage() {
           icon={ClipboardList}
           label="Orders Today"
           value={stats.todayOrders}
-          href="/cms/orders"
+          href="/cms/order"
           primaryColor={primaryColor}
           index={1}
         />
@@ -462,7 +462,7 @@ export default function DashboardPage() {
           icon={ChefHat}
           label="Open Orders"
           value={stats.openOrders}
-          href="/cms/orders"
+          href="/cms/order"
           primaryColor={primaryColor}
           index={2}
         />

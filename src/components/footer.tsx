@@ -86,7 +86,7 @@ useEffect(() => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Quick Links</h3>
             <ul className="space-y-2 text-sm">
-              {["About Us", "Contact Us", "Teams", "Menu", ].map((link) => (
+              {["About Us", "Contact Us", "Teams", "Menu Items", ].map((link) => (
                 <li key={link}>
                   <Link
                     href={`/${link.toLowerCase().replace(" ", "-")}`}
@@ -108,7 +108,7 @@ useEffect(() => {
           <Link
             // This links to the menu page and passes the category name as a query param
             href={{
-              pathname: "/menu",
+              pathname: "/menu-items",
               query: { category: c.name.toLowerCase() },
             }}
             className="hover:pl-2 transition-all duration-300 flex items-center"

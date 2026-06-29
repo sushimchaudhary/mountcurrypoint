@@ -21,7 +21,7 @@ const NAV_LINKS = [
   { label: "About", href: "/about-us" },
   { label: "Menu", href: "/menu-items" },
   { label: "Gallery", href: "/galleries" },
-  { label: "Contact", href: "/contact" },
+  { label: "Contact", href: "/contact-us" },
 ];
 
 function triggerGoogleTranslate(langCode: string) {

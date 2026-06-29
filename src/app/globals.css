@@ -70,7 +70,7 @@ body {
 }
 
 .ck-content a {
-  color: #16a34a;
+  color: #fae7d3;
   text-decoration: underline;
 }
 
@@ -93,7 +93,7 @@ body {
 }
 
 .ck-content blockquote {
-  border-left: 4px solid #16a34a;
+  border-left: 4px solid #fae7d3;
   padding-left: 1rem;
   color: #6b7280;
   font-style: italic;

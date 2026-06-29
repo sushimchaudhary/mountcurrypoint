@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 
 
 export const viewport = {
-  themeColor: "#059669",
+  themeColor: "#c47c30",
   width: "device-width",
   initialScale: 1,
 };
@@ -56,7 +56,7 @@ export default function RootLayout({
     "logo": "https://mountcurrypoint.com/logo.png",
     "contactPoint": {
       "@type": "ContactPoint",
-      "email": "business@thearyatara.info",
+      "email": "themountcurrypoint@gmail.com",
       "contactType": "customer service"
     }
   };
