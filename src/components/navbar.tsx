@@ -114,7 +114,7 @@ export default function Navbar() {
               )}
             </div>
             <div className="hidden md:flex flex-col leading-tight">
-              <span className="text-base lg:text-lg font-extrabold tracking-tight text-[#c47c30]">
+              <span className="text-sm lg:text-2xl pl-3 font-extrabold tracking-tight text-[#c47c30]">
                 {orgDetails?.title || "The Mount Curry Point"}
               </span>
             </div>

@@ -83,8 +83,8 @@ export default function HeroBanner() {
         )}
 
         {/* Layered overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0603]/45 via-[#0a0603]/25 to-[#0a0603]/40" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0603]/45 via-transparent to-[#0a0603]/45" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0603]/95 via-[#0a0603]/25 to-[#0a0603]/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0603]/25 via-transparent to-[#0a0603]/25" />
       </div>
 
       {/* ── Decorative rings ──────────────────────────────────── */}
