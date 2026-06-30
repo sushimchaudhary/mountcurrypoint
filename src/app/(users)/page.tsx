@@ -43,9 +43,9 @@ export default function LandingPage() {
         <MenuItemsSection/>
         </section>
         
-        {/* <section className="bg-white py-10">
+        <section className="bg-white py-10">
           <TestimonialsSection />
-        </section> */}
+        </section>
 
         <section className="bg-[#E88924]/20">
           <SliderCoverflow />
