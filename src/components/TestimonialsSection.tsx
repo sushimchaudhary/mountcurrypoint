@@ -5,7 +5,7 @@ import { Star, Quote } from "lucide-react";
 
 export default function TestimonialsSection() {
   return (
-    <section className="relative py-2 bg-[#fdfbf8] overflow-hidden">
+    <section className="relative py-2 overflow-hidden">
       {/* Decorative background quote mark */}
       <Quote
         className="absolute top-10 left-1/2 -translate-x-1/2 w-40 h-40 text-[#c47c30]/5 pointer-events-none"
