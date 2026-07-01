@@ -20,6 +20,12 @@ export const OrderServices = {
     return exception.message || "Something went wrong";
   },
 
+  getDetailsFresh: async (args: any = {}) => {
+  // Always hits the network — never touches the base-list cache.
+  const res = await axiosInstance.get("/orders/", { params: args });
+  return res.data;
+},
+
   getDetails: async (args?: any) => {
     const url = "/orders/";
     const isBaseListCall = !args;

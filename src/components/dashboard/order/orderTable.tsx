@@ -14,6 +14,7 @@ import ConfirmModal from "@/components/delete/confirmModel";
 import { OrderServices } from "@/services/orderServices";
 import { BillForm } from "@/components/dashboard/bill/billForm";
 import { Select } from "antd";
+import { usePolling } from "@/hooks/usePolling";
 
 const PAGE_SIZE = 20;
 
@@ -255,20 +256,31 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
     setBillPrefillOrder(null);
   };
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const res = await OrderServices.getDetails();
-      setDataList(Array.isArray(res) ? res : res?.results || []);
-    } catch {
-      toast.error("Failed to load orders");
-    } finally {
-      setLoading(false);
-    }
-  };
+// Replace the existing fetchData function
+const fetchData = async (opts: { silent?: boolean } = {}) => {
+  try {
+    if (!opts.silent) setLoading(true);
+    const res = await OrderServices.getDetailsFresh();
+    const next = Array.isArray(res) ? res : res?.results || [];
 
-  useEffect(() => { fetchData(); }, [refreshTrigger]);
+    setDataList((prev) => {
+      // Avoid needless re-renders if nothing actually changed
+      if (JSON.stringify(prev) === JSON.stringify(next)) return prev;
+      return next;
+    });
+  } catch {
+    if (!opts.silent) toast.error("Failed to load orders");
+  } finally {
+    if (!opts.silent) setLoading(false);
+  }
+};
 
+useEffect(() => {
+  fetchData(); // full load with spinner on mount / refreshTrigger change
+}, [refreshTrigger]);
+
+// ── Real-time polling: silently refresh every 6s, no spinner, no reset of UI state ──
+usePolling(() => fetchData({ silent: true }), 6000, !billFormOpen && !viewOrder);
   useEffect(() => {
     const q = searchQuery.toLowerCase();
     setFilteredData(

@@ -34,6 +34,7 @@ import { TableServices } from "@/services/tableServices";
 import { OrderServices } from "@/services/orderServices";
 import { OrganizationServices } from "@/services/organizationServices";
 import Image from "next/image";
+import { usePolling } from "@/hooks/usePolling";
 
 function stripHtml(html: string): string {
   if (!html) return "";
@@ -528,6 +529,7 @@ function MenuContent() {
   // ---- Cart drawer height tracking (so cards are never hidden behind the floating cart) ----
   const cartDrawerRef = useRef<HTMLDivElement>(null);
   const [cartDrawerHeight, setCartDrawerHeight] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const el = cartDrawerRef.current;
@@ -565,6 +567,26 @@ function MenuContent() {
     return () => clearInterval(t);
   }, [tableId]);
 
+  // ── Real-time: keep the open history drawer fresh without a spinner ──
+const refreshOrdersSilently = async () => {
+  if (!tableId) return;
+  try {
+    const res = await OrderServices.getDetailsFresh({ table_id: tableId });
+    const list = Array.isArray(res) ? res : res?.results || [];
+    const myIds = getMyOrderIds(tableId);
+    const mine = list.filter((order: any) => myIds.includes(order.id));
+
+    setOrders((prev) => {
+      if (JSON.stringify(prev) === JSON.stringify(mine)) return prev;
+      return mine;
+    });
+  } catch {
+    // stay silent — don't toast on background polling failures
+  }
+};
+
+usePolling(refreshOrdersSilently, 5000, historyOpen && !!tableId);
+
   const fetchRestaurant = async () => {
     try {
       const res = await OrganizationServices.getDetails();
@@ -595,6 +617,23 @@ function MenuContent() {
       }
     } catch {}
   };
+
+
+  const refreshMenuSilently = async () => {
+  try {
+    const menuRes = await MenuServices.getDetails();
+    const menuList: any[] = Array.isArray(menuRes) ? menuRes : menuRes?.results || [];
+    setMenuItems((prev) => {
+      const next = menuList.filter((m) => m.status === "available");
+      if (JSON.stringify(prev) === JSON.stringify(next)) return prev;
+      return next;
+    });
+  } catch {}
+};
+
+usePolling(refreshMenuSilently, 10000, true); // every 10s, always on
+
+
 
   const init = async () => {
     try {
@@ -648,10 +687,14 @@ function MenuContent() {
     }
   };
 
-  const visibleItems =
-    activeCategory === "all"
-      ? menuItems
-      : menuItems.filter((m) => m.category === activeCategory);
+  // const visibleItems =
+  //   activeCategory === "all"
+  //     ? menuItems
+  //     : menuItems.filter((m) => m.category === activeCategory);
+
+  const visibleItems = menuItems.filter((m) =>
+  m.name?.toLowerCase().includes(searchQuery.trim().toLowerCase())
+);
 
   const getPortion = (item: any, portionId: number) =>
     item.portions?.find((p: any) => p.id === portionId);
@@ -1021,49 +1064,62 @@ function MenuContent() {
         }}
       >
         {/* Redesigned Premium Sticky Header Block */}
-        <header className="px-4 sm:px-5 pt-5 sm:pt-6 pb-3 sm:pb-4 sticky top-0 z-30 backdrop-blur-md bg-white/90 border-b border-gray-100 flex items-center justify-between gap-3 shadow-sm">
-          <div className="min-w-0">
-            {tableNumber && tableValid ? (
-              <div className="flex items-center gap-2 sm:gap-2.5">
-                <div className="bg-[#c47c30] text-white font-sans px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase shadow-sm flex-shrink-0">
-                  Table : {tableNumber}
-                </div>
-                <h1 className="text-base sm:text-lg font-bold text-[#241712] truncate">
-                  Our Special Menu
-                </h1>
-              </div>
-            ) : tableNumber && !tableValid ? (
-              <div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-red-50 border border-red-100 text-red-600">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                  Table unrecognized
-                </span>
-                <p className="text-[10px] sm:text-[11px] text-[#8a7a6e] mt-1">
-                  Please re-scan code to place orders
-                </p>
-              </div>
-            ) : (
-              <div>
-                <h1 className="text-lg sm:text-xl font-extrabold text-[#241712] tracking-tight">
-                  Our Special Menu
-                </h1>
-                <p className="text-[10px] sm:text-[11px] text-[#8a7a6e] mt-0.5">
-                  Scan table QR to place direct orders
-                </p>
-              </div>
-            )}
-          </div>
+      <header className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3 sm:pb-4 sticky top-0 z-30 backdrop-blur-md bg-white/90 border-b border-gray-100 shadow-sm">
+  <div className="flex items-center justify-between gap-3">
+    <div className="flex items-center gap-3 min-w-0">
+      {/* Restaurant logo */}
+      <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-gray-200 shadow-sm flex-shrink-0 bg-white flex items-center justify-center">
+        {restaurant?.logo ? (
+          <img
+            src={restaurant.logo}
+            alt={restaurant?.title || "Restaurant logo"}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <UtensilsCrossed size={20} className="text-[#c47c30]" />
+        )}
+      </div>
 
-          <button
-            onClick={() => {
-              setShowOrderSuccessMessage(false);
-              openHistory();
-            }}
-            className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600 hover:text-[#c47c30] hover:border-[#c47c30]/40 active:scale-90 transition-all"
-          >
-            <History size={17} className="sm:size-[18px]" />
-          </button>
-        </header>
+      <div className="min-w-0">
+        <h1 className="text-[15px] sm:text-lg font-extrabold text-[#241712] truncate leading-tight">
+          {restaurant?.title || "Our Special Menu"}
+        </h1>
+
+        {tableNumber && tableValid ? (
+          <span className="inline-flex items-center font-sans bg-[#c47c30] text-white px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase shadow-sm mt-0.5">
+            Table: {tableNumber}
+          </span>
+        ) : tableNumber && !tableValid ? (
+          <span className="inline-flex items-center gap-1.5 mt-0.5 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-red-50 border border-red-100 text-red-600">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+            Table unrecognized
+          </span>
+        ) : (
+          <p className="text-[10px] sm:text-[11px] text-[#8a7a6e] truncate flex items-center gap-1 mt-0.5">
+            <MapPin size={10} className="flex-shrink-0" />
+            {restaurant?.address || "Scan table QR to place direct orders"}
+          </p>
+        )}
+      </div>
+    </div>
+
+    <button
+      onClick={() => {
+        setShowOrderSuccessMessage(false);
+        openHistory();
+      }}
+      className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600 hover:text-[#c47c30] hover:border-[#c47c30]/40 active:scale-90 transition-all"
+    >
+      <History size={17} className="sm:size-[18px]" />
+    </button>
+  </div>
+
+  {tableNumber && !tableValid && (
+    <p className="text-[10px] sm:text-[11px] text-[#8a7a6e] mt-1.5">
+      Please re-scan code to place orders
+    </p>
+  )}
+</header>
 
         {/* Clean, Non-overlapping Sticky Category Filter Row */}
         <div className="flex gap-2 sm:gap-2.5 overflow-x-auto px-4 sm:px-5 py-3 sm:py-3.5 bg-white sticky top-[65px] sm:top-[73px] z-20 border-b border-gray-200/60 scrollbar-hide">
