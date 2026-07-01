@@ -169,6 +169,11 @@ const MENU_GROUPS: MenuGroup[] = [
         href: "/cms/organizations",
       },
       {
+        icon: FileText,
+        labelKey: "Notice",
+        href: "/cms/notice",
+      },
+      {
         icon: MessageSquareText,
         labelKey: "Contacts",
         href: "/cms/contacts",

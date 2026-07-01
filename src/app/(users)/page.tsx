@@ -4,6 +4,7 @@ import TeamMember from "@/components/BoardOfDirectors";
 import ContactSection from "@/components/ContactSection";
 import HeroBanner from "@/components/Hero";
 import MenuItemsSection from "@/components/menuItemsSection";
+import NoticePopup from "@/components/noticePopup";
 import ScrollToTop from "@/components/ScrollTop";
 import SliderCoverflow from "@/components/Slider";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -24,7 +25,7 @@ export default function LandingPage() {
 
   return (
     <main ref={containerRef} className="relative">
-      
+      <NoticePopup/>
       {/* 1. HeroBanner with motion */}
       <motion.div 
         style={{ opacity, scale }} 
