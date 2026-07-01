@@ -43,12 +43,10 @@ export const OrderServices = {
     return res.data;
   },
 
-  // ✅ FIX: clearCache() BEFORE the request so the next getDetails()
-  //    fetches fresh data. Also returns the updated order from the response.
   updateDetails: async (id: string | number, data: any) => {
-    OrderServices.clearCache();                          // bust cache first
+    OrderServices.clearCache();
     const res = await axiosInstance.patch(`/orders/${id}/`, data);
-    return res.data;                                     // return fresh server data
+    return res.data;
   },
 
   deleteDetails: async (id: string | number) => {
@@ -57,8 +55,46 @@ export const OrderServices = {
     return res.data;
   },
 
+  // ── New: Admin accepts a pending order ──────────────────────────────
+  acceptOrder: async (id: string | number) => {
+    OrderServices.clearCache();
+    const res = await axiosInstance.post(`/orders/${id}/accept/`);
+    return res.data; // { message, status }
+  },
+
+  // ── New: Customer/admin picks pay_now or pay_later ──────────────────
+  selectPaymentChoice: async (
+    id: string | number,
+    payment_choice: "pay_now" | "pay_later"
+  ) => {
+    OrderServices.clearCache();
+    const res = await axiosInstance.post(`/orders/${id}/payment-choice/`, {
+      payment_choice,
+    });
+    return res.data; // { message, order_status, bill? }
+  },
+
+  // ── New: Customer appends more items to their still-open order ──────
+  // items: [{ menu_item, selected_portion_id, quantity }]
+  // Backend blocks this once the order is served / completed_settled / cancelled.
+  appendItems: async (
+    id: string | number,
+    items: { menu_item: number; selected_portion_id: number; quantity: number }[]
+  ) => {
+    OrderServices.clearCache();
+    const res = await axiosInstance.post(`/orders/${id}/append-items/`, { items });
+    return res.data; // { message, order }
+  },
+
   clearCache: () => {
     orderCache = null;
     orderCachePromise = null;
+  },
+
+  // ── New: Admin force-sets status directly ───────────────────────────
+  setStatus: async (id: string | number, status: string) => {
+    OrderServices.clearCache();
+    const res = await axiosInstance.post(`/orders/${id}/set-status/`, { status });
+    return res.data; // { message, status }
   },
 };

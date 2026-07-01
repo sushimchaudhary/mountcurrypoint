@@ -4,59 +4,64 @@ import {
   Pencil, Trash2, ChevronLeft, ChevronRight,
   Inbox, SearchX, Download, ChevronDown, ChevronRight as ChevronRightIcon,
   Clock, Receipt, AlertTriangle, Hash, UtensilsCrossed, Eye, X,
+  CheckCircle2, Wallet, Banknote,
 } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Select } from "antd";
 import TableLoadingSkeleton from "../tableLoadingSkeleton";
 import ConfirmModal from "@/components/delete/confirmModel";
 import { OrderServices } from "@/services/orderServices";
 import { BillForm } from "@/components/dashboard/bill/billForm";
+import { Select } from "antd";
 
 const PAGE_SIZE = 20;
 
 const STATUS_DOT: Record<string, string> = {
-  pending:   "bg-yellow-400",
-  preparing: "bg-blue-500",
-  served:    "bg-purple-500",
-  completed: "bg-green-500",
-  cancelled: "bg-red-400",
+  pending:           "bg-yellow-400",
+  accepted:          "bg-cyan-500",
+  preparing:         "bg-blue-500",
+  served:            "bg-purple-500",
+  completed_settled: "bg-green-500",
+  cancelled:         "bg-red-400",
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  pending:   "Pending",
-  preparing: "Preparing",
-  served:    "Served",
-  completed: "Completed",
-  cancelled: "Cancelled",
+  pending:           "Pending",
+  accepted:          "Accepted",
+  preparing:         "Preparing",
+  served:            "Served",
+  completed_settled: "Completed & Settled",
+  cancelled:         "Cancelled",
 };
 
-// Pill background/text/border per status — makes status scannable at a glance
 const STATUS_BADGE: Record<string, string> = {
-  pending:   "bg-yellow-50 text-yellow-700 border-yellow-200",
-  preparing: "bg-blue-50 text-blue-700 border-blue-200",
-  served:    "bg-purple-50 text-purple-700 border-purple-200",
-  completed: "bg-green-50 text-green-700 border-green-200",
-  cancelled: "bg-red-50 text-red-600 border-red-200",
+  pending:           "bg-yellow-50 text-yellow-700 border-yellow-200",
+  accepted:          "bg-cyan-50 text-cyan-700 border-cyan-200",
+  preparing:         "bg-blue-50 text-blue-700 border-blue-200",
+  served:            "bg-purple-50 text-purple-700 border-purple-200",
+  completed_settled: "bg-green-50 text-green-700 border-green-200",
+  cancelled:         "bg-red-50 text-red-600 border-red-200",
 };
 
-// Left accent stripe per status, applied to the first cell of each row
-const STATUS_ACCENT: Record<string, string> = {
-  // pending:   "border-l-yellow-400",
-  // preparing: "border-l-blue-400",
-  // served:    "border-l-purple-400",
-  // completed: "border-l-green-400",
-  // cancelled: "border-l-red-300",
+const PAYMENT_BADGE: Record<string, string> = {
+  uncommitted: "bg-gray-50 text-gray-500 border-gray-200",
+  pay_now:     "bg-emerald-50 text-emerald-700 border-emerald-200",
+  pay_later:   "bg-amber-50 text-amber-700 border-amber-200",
+};
+
+const PAYMENT_LABEL: Record<string, string> = {
+  uncommitted: "Not chosen",
+  pay_now:     "Pay Now",
+  pay_later:   "Pay Later",
 };
 
 // Minutes after which an order in this status is considered "needs attention"
 const URGENT_AFTER: Record<string, number> = {
   pending:   10,
+  accepted:  10,
   preparing: 20,
 };
-
-const STATUS_OPTIONS = Object.entries(STATUS_LABEL).map(([value, label]) => ({ value, label }));
 
 function formatDateTime(iso: string) {
   if (!iso) return "—";
@@ -96,7 +101,7 @@ function OrderViewModal({
 }) {
   if (!order) return null;
   const orderItems: any[] = order.items || [];
-  const canBill = order.status !== "cancelled";
+  const canBill = order.status !== "cancelled" && order.status !== "completed_settled";
 
   return (
     <>
@@ -130,6 +135,17 @@ function OrderViewModal({
               <Clock size={10} /> {formatDateTime(order.created_at)}
             </span>
           </div>
+
+          {/* Payment choice bar */}
+          {order.payment_choice && (
+            <div className="flex items-center justify-between px-5 py-2 border-b border-gray-100 bg-white flex-shrink-0">
+              <span className="text-[10px] font-bold text-[#8094ae] uppercase">Payment</span>
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${PAYMENT_BADGE[order.payment_choice] || PAYMENT_BADGE.uncommitted}`}>
+                {order.payment_choice === "pay_now" ? <Wallet size={10} /> : order.payment_choice === "pay_later" ? <Banknote size={10} /> : null}
+                {PAYMENT_LABEL[order.payment_choice] || order.payment_choice}
+              </span>
+            </div>
+          )}
 
           {/* Items list — bigger thumbnails, clearer hierarchy */}
           <div className="overflow-y-auto flex-1 bg-gray-50 p-4 space-y-2.5">
@@ -190,7 +206,7 @@ function OrderViewModal({
             <button
               onClick={onGenerateBill}
               disabled={!canBill}
-              title={canBill ? "Generate bill" : "Cannot bill a cancelled order"}
+              title={canBill ? "Generate bill" : "Cannot bill this order"}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-[11px] font-bold transition-all active:scale-95 ${
                 canBill
                   ? "bg-emerald-500 text-white hover:bg-emerald-600"
@@ -216,9 +232,9 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteId, setDeleteId]           = useState<any>(null);
   const [expandedRows, setExpandedRows]   = useState<Set<number>>(new Set());
-  const [statusLoading, setStatusLoading] = useState<Record<number, boolean>>({});
+  const [actionLoading, setActionLoading] = useState<Record<number, boolean>>({});
   const [viewOrder, setViewOrder]         = useState<any>(null);
-
+  const STATUS_OPTIONS = Object.entries(STATUS_LABEL).map(([value, label]) => ({ value, label }));
   // Forces "X min ago" labels and urgency flags to refresh periodically
   const [, forceTick] = useState(0);
   useEffect(() => {
@@ -285,18 +301,59 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
       return next;
     });
 
-  const handleStatusChange = async (orderId: number, newStatus: string) => {
-    setStatusLoading((p) => ({ ...p, [orderId]: true }));
+  // ── Admin accepts a pending order ───────────────────────────────────────
+  const handleAccept = async (orderId: number) => {
+    setActionLoading((p) => ({ ...p, [orderId]: true }));
     try {
-      const updated = await OrderServices.updateDetails(orderId, { status: newStatus });
+      const res = await OrderServices.acceptOrder(orderId);
       setDataList((prev) =>
-        prev.map((o) => (o.id === orderId ? { ...o, status: updated.status } : o))
+        prev.map((o) => (o.id === orderId ? { ...o, status: res.status ?? "accepted" } : o))
       );
-      toast.success(`Order #${orderId} → ${STATUS_LABEL[updated.status]}`);
-    } catch {
-      toast.error("Failed to update status");
+      toast.success(res.message || `Order #${orderId} accepted`);
+    } catch (err: any) {
+      toast.error(OrderServices.parseError(err));
     } finally {
-      setStatusLoading((p) => ({ ...p, [orderId]: false }));
+      setActionLoading((p) => ({ ...p, [orderId]: false }));
+    }
+  };
+
+  // ── Customer/admin picks pay_now or pay_later ───────────────────────────
+  const handlePaymentChoice = async (orderId: number, choice: "pay_now" | "pay_later") => {
+    setActionLoading((p) => ({ ...p, [orderId]: true }));
+    try {
+      const res = await OrderServices.selectPaymentChoice(orderId, choice);
+      setDataList((prev) =>
+        prev.map((o) =>
+          o.id === orderId
+            ? { ...o, status: res.order_status ?? "preparing", payment_choice: choice }
+            : o
+        )
+      );
+      toast.success(
+        res.message ||
+          (choice === "pay_now"
+            ? `Order #${orderId} paid — sent to kitchen`
+            : `Order #${orderId} sent to kitchen (pay later)`)
+      );
+    } catch (err: any) {
+      toast.error(OrderServices.parseError(err));
+    } finally {
+      setActionLoading((p) => ({ ...p, [orderId]: false }));
+    }
+  };
+
+  const handleStatusChange = async (orderId: number, newStatus: string) => {
+    setActionLoading((p) => ({ ...p, [orderId]: true }));
+    try {
+      const res = await OrderServices.setStatus(orderId, newStatus);
+      setDataList((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, status: res.status ?? newStatus } : o))
+      );
+      toast.success(res.message || `Order #${orderId} → ${STATUS_LABEL[newStatus]}`);
+    } catch (err: any) {
+      toast.error(OrderServices.parseError(err));
+    } finally {
+      setActionLoading((p) => ({ ...p, [orderId]: false }));
     }
   };
 
@@ -322,7 +379,7 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
     const doc = new jsPDF();
     doc.text("Orders", 14, 15);
     autoTable(doc, {
-      head: [["#", "Order ID", "Table", "Items", "Total", "Status", "Time"]],
+      head: [["#", "Order ID", "Table", "Items", "Total", "Status", "Payment", "Time"]],
       body: paginated.map((item, i) => [
         (currentPage - 1) * PAGE_SIZE + i + 1,
         `#${item.id}`,
@@ -330,6 +387,7 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
         item.items?.length ?? 0,
         `$${Number(item.total_amount).toFixed(2)}`,
         STATUS_LABEL[item.status] || item.status,
+        PAYMENT_LABEL[item.payment_choice] || "—",
         formatDateTime(item.created_at),
       ]),
       startY: 25,
@@ -361,19 +419,20 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
                   <th className="px-4 py-1.5 text-[11px] font-bold text-[#8094ae] uppercase">Table</th>
                   <th className="px-4 py-1.5 text-[11px] font-bold text-[#8094ae] uppercase">Items</th>
                   <th className="px-4 py-1.5 text-[11px] font-bold text-[#8094ae] uppercase">Total</th>
-                  <th className="px-4 py-1.5 text-[11px] font-bold text-[#8094ae] uppercase">Status</th>
+                  <th className="px-4 py-1.5 text-[11px] font-bold text-[#8094ae] uppercase w-36">Status</th>
+                  {/* ── NEW: dedicated Payment column ── */}
+                  <th className="px-4 py-1.5 text-[11px] font-bold text-[#8094ae] uppercase w-36">Payment</th>
                   <th className="px-4 py-1.5 text-[11px] font-bold text-[#8094ae] uppercase">Time</th>
-                  {/* ── wider action column for the bill button ── */}
                   <th className="px-4 py-1.5 text-[11px] font-bold text-[#8094ae] uppercase text-right w-36">Action</th>
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-gray-100">
                 {loading ? (
-                  <TableLoadingSkeleton rows={5} cols={9} />
+                  <TableLoadingSkeleton rows={5} cols={10} />
                 ) : paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="text-center py-16">
+                    <td colSpan={10} className="text-center py-16">
                       <div className="flex flex-col items-center gap-2">
                         {searchQuery
                           ? <SearchX size={32} className="text-rose-300" />
@@ -389,11 +448,9 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
                     const isSelected        = selectedIds.includes(item.id);
                     const isExpanded        = expandedRows.has(item.id);
                     const orderItems: any[] = item.items || [];
-                    const isChangingStatus  = statusLoading[item.id];
-                    // Disable bill button for cancelled orders
-                    const canBill           = item.status !== "cancelled";
+                    const isActing          = actionLoading[item.id];
+                    const canBill           = item.status !== "cancelled" && item.status !== "completed_settled";
 
-                    // Urgency: order has been sitting in this status too long
                     const minsAgo         = getMinutesAgo(item.created_at);
                     const urgentThreshold  = URGENT_AFTER[item.status];
                     const isUrgent =
@@ -410,7 +467,7 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
                     return (
                       <React.Fragment key={item.id}>
                         <tr className={`hover:bg-gray-50 transition-colors ${rowTint}`}>
-                          <td className={`px-4 py-2 text-center border-l-4 ${STATUS_ACCENT[item.status] || "border-l-transparent"}`}>
+                          <td className="px-4 py-2 text-center">
                             <input type="checkbox" checked={isSelected} onChange={() => handleSelectOne(item.id)} className="rounded border-gray-300 cursor-pointer" />
                           </td>
                           <td className="px-4 py-2 text-[10px] text-[#526484]">
@@ -475,17 +532,17 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
                             </span>
                           </td>
 
-                          {/* Status — colored pill + inline dropdown */}
+                          {/* Status — admin-editable dropdown + Accept (only) */}
                           <td className="px-4 py-2">
                             <div className={`inline-flex items-center rounded-full border pl-2 pr-1 ${STATUS_BADGE[item.status] || "bg-gray-50 text-gray-600 border-gray-200"}`}>
                               <Select
                                 value={item.status}
                                 onChange={(val) => handleStatusChange(item.id, val)}
-                                loading={isChangingStatus}
-                                disabled={isChangingStatus}
+                                loading={isActing}
+                                disabled={isActing}
                                 size="small"
                                 variant="borderless"
-                                className="!text-[10px] !font-bold min-w-[88px]"
+                                className="!text-[10px] !font-bold min-w-[110px]"
                                 popupMatchSelectWidth={false}
                                 options={STATUS_OPTIONS.map((opt) => ({
                                   value: opt.value,
@@ -498,6 +555,48 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
                                 }))}
                               />
                             </div>
+
+                            {item.status === "pending" && (
+                              <button
+                                onClick={() => handleAccept(item.id)}
+                                disabled={isActing}
+                                className="mt-1 flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200 hover:bg-cyan-100 disabled:opacity-40 transition-colors"
+                              >
+                                <CheckCircle2 size={10} />
+                                {isActing ? "Accepting..." : "Accept"}
+                              </button>
+                            )}
+                          </td>
+
+                          {/* ── NEW: dedicated Payment column ── */}
+                          <td className="px-4 py-2">
+                            {item.payment_choice && item.payment_choice !== "uncommitted" ? (
+                              <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${PAYMENT_BADGE[item.payment_choice]}`}>
+                                {item.payment_choice === "pay_now" ? <Wallet size={10} /> : <Banknote size={10} />}
+                                {PAYMENT_LABEL[item.payment_choice]}
+                              </div>
+                            ) : item.status === "accepted" ? (
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={() => handlePaymentChoice(item.id, "pay_now")}
+                                  disabled={isActing}
+                                  className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 disabled:opacity-40 transition-colors"
+                                >
+                                  <Wallet size={10} /> Now
+                                </button>
+                                <button
+                                  onClick={() => handlePaymentChoice(item.id, "pay_later")}
+                                  disabled={isActing}
+                                  className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 disabled:opacity-40 transition-colors"
+                                >
+                                  <Banknote size={10} /> Later
+                                </button>
+                              </div>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border bg-gray-50 text-gray-400 border-gray-200">
+                                — Not chosen
+                              </span>
+                            )}
                           </td>
 
                           {/* Time — relative label + urgency flag */}
@@ -537,11 +636,10 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
                                 <Trash2 size={12} />
                               </button>
 
-                              {/* ── Generate Bill button ───────────────── */}
                               <button
                                 onClick={() => openBillForm(item)}
                                 disabled={!canBill}
-                                title={canBill ? "Generate bill" : "Cannot bill a cancelled order"}
+                                title={canBill ? "Generate bill" : "Cannot bill this order"}
                                 className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-bold transition-all active:scale-95 ${
                                   canBill
                                     ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200"
@@ -555,10 +653,10 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
                           </td>
                         </tr>
 
-                        {/* ── Expanded items sub-panel — now a real table ──────── */}
+                        {/* ── Expanded items sub-panel ──────────────────────── */}
                         {isExpanded && (
                           <tr key={`expanded-${item.id}`}>
-                            <td colSpan={9} className="px-0 py-0 bg-[#f8f9fc] border-b border-gray-100">
+                            <td colSpan={10} className="px-0 py-0 bg-[#f8f9fc] border-b border-gray-100">
                               <div className="mx-6 my-2 rounded border border-gray-100 bg-white overflow-hidden shadow-sm">
                                 <table className="w-full text-left border-separate border-spacing-0">
                                   <thead>
@@ -623,7 +721,6 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
                                   </tbody>
                                 </table>
 
-                                {/* Footer row: order total + quick bill button */}
                                 <div className="flex justify-between items-center px-3 py-1.5 bg-[#f5f6fa] border-t border-gray-100">
                                   <button
                                     onClick={() => openBillForm(item)}
@@ -706,7 +803,7 @@ export default function OrderTable({ onEdit, refreshTrigger, searchQuery = "" }:
         onClose={closeBillForm}
       />
 
-      {/* ── Order view modal — bigger, card-style item display ── */}
+      {/* ── Order view modal ── */}
       {viewOrder && (
         <OrderViewModal
           order={viewOrder}

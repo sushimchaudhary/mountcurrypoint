@@ -3,8 +3,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-   const BASE_URL = "https://api.mountcurrypoint.com/api/apps";
-//  const BASE_URL = "http://127.0.0.1:8000/api/apps";
+  //  const BASE_URL = "https://api.mountcurrypoint.com/api/apps";
+ const BASE_URL = "http://127.0.0.1:8000/api/apps";
 
 // ==============================
 // 🔐 Private Axios (with token)
