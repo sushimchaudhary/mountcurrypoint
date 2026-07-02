@@ -179,7 +179,7 @@ export default function RestaurantTableTable({ onEdit, refreshTrigger, searchQue
   return (
     <div className="space-y-3">
       <div className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto max-h-[400px] scrollbar-hide relative">
+        <div className="overflow-x-auto max-h-[420px] scrollbar-hide relative">
           <table className="w-full text-left border-separate border-spacing-0">
             <thead className="sticky top-0 z-30 shadow-sm">
               <tr className="bg-[#f5f6fa]">
