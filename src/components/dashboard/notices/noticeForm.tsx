@@ -196,7 +196,7 @@ export function NoticeForm({ initialData, onSuccess, onClose, isOpen }: any) {
                                 Remove
                               </button>
                             )}
-                            <span className="text-[10px] text-gray-300">JPG, PNG, WEBP · max 2MB</span>
+                            <span className="text-[10px] text-gray-300">JPG, PNG, WEBP · max 5MB</span>
                           </div>
                         </div>
                       </div>
