@@ -31,7 +31,7 @@ export const ContactServices = {
       if (contactCachePromise !== null) return contactCachePromise;
 
       contactCachePromise = axiosInstance
-        .get("/submit-contact/", { params })
+        .get("/contacts/", { params })
         .then((res) => {
           contactCache = res.data;
           contactCachePromise = null;
@@ -56,13 +56,13 @@ export const ContactServices = {
   },
 
   update: async (id: string, data?: any) => {
-    const res = await axiosInstance.patch(`/submit-contact/${id}/`, data);
+    const res = await axiosInstance.patch(`/contacts/${id}/`, data);
     ContactServices.clearCache();
     return res.data;
   },
 
   delete: async (id: string) => {
-    const res = await axiosInstance.delete(`/submit-contact/${id}/`);
+    const res = await axiosInstance.delete(`/contacts/${id}/`);
     ContactServices.clearCache();
     return res.data;
   },
