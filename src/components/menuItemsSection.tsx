@@ -56,7 +56,7 @@ function MenuCard({ item }: { item: any }) {
       className="bg-white rounded-lg border border-[#e8dccd] overflow-hidden flex flex-col shadow-sm hover:shadow-lg transition-shadow group"
     >
       {/* Image */}
-      <div className="relative h-44 w-full bg-[#fcf7f2] overflow-hidden">
+      <div className="relative md:h-44 h-28 w-full bg-[#fcf7f2] overflow-hidden">
         {item.image ? (
           <img
             src={item.image}

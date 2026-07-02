@@ -91,7 +91,7 @@ function MenuCard({ item }: { item: any }) {
       whileHover={{ y: -5, transition: { duration: 0.18 } }}
       className="bg-white rounded-lg border border-[#e8dccd] overflow-hidden flex flex-col shadow-sm hover:shadow-lg transition-shadow group"
     >
-      <div className="relative h-44 w-full  overflow-hidden">
+      <div className="relative md:h-44 h-28 w-full  overflow-hidden">
         {item.image ? (
           <img
             src={item.image}

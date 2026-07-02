@@ -12,7 +12,7 @@ export default function TestimonialsSection() {
         strokeWidth={0.5}
       />
 
-      <div className="relative max-w-7xl mx-auto px-6">
+      <div className="relative max-w-7xl mx-auto px-3 md:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-14">
           <div className="flex items-center justify-center gap-4 mb-5">
@@ -52,7 +52,7 @@ export default function TestimonialsSection() {
         </div>
 
         {/* Widget container */}
-        <div className="relative bg-white rounded-sm shadow-[0_4px_40px_rgba(0,0,0,0.06)] border border-gray-100 p-6 md:p-10">
+        <div className="relative bg-white rounded-sm shadow-[0_4px_40px_rgba(0,0,0,0.06)] border border-gray-100 p-2 md:p-3">
           {/* Corner accents */}
           <div className="absolute -top-2 -left-2 w-10 h-10 border-t-2 border-l-2 border-[#c47c30]" />
           <div className="absolute -bottom-2 -right-2 w-10 h-10 border-b-2 border-r-2 border-[#c47c30]" />
