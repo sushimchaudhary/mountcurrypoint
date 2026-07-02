@@ -367,7 +367,7 @@ export default function BillTable({ onEdit, refreshTrigger, searchQuery = "" }: 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await BillServices.getDetails();
+      const res = await BillServices.getDetailsFresh();
       setDataList(Array.isArray(res) ? res : res?.results || []);
     } catch {
       toast.error("Failed to load bills");
