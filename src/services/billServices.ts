@@ -21,23 +21,11 @@ export const BillServices = {
     return exception.message || "Something went wrong";
   },
 
-  getDetails: async (args?: any) => {
-    const url = "/bills/";
-    const isBaseListCall = !args;
-    if (isBaseListCall) {
-      if (billCache !== null) return billCache;
-      if (billCachePromise !== null) return billCachePromise;
-      billCachePromise = axiosInstance.get(url).then((res) => {
-        billCache = res.data;
-        billCachePromise = null;
-        return billCache;
-      });
-      return billCachePromise;
-    }
-    const res = await axiosInstance.get(url, { params: args });
-    return res.data;
-  },
-
+ getDetailsFresh: async (args: any = {}) => {
+  // Always hits the network — never touches the base-list cache.
+  const res = await axiosInstance.get("/bills/", { params: args });
+  return res.data;
+},
   // POST — create/generate a bill for an order
   // Payload: { order_id, discount_percentage, vat_percentage, payment_method }
   createDetails: async (data: {

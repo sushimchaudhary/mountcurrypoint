@@ -488,6 +488,8 @@ export default function LoginPage() {
     }
   };
 
+  const isBtnDisabled = isLoading || !recaptchaToken;
+
   return (
     <ConfigProvider theme={{ token: { colorPrimary: primaryColor, borderRadius: 4, controlHeight: 40 } }}>
       <div className="bg-[#f5f6fa] p-3 min-h-screen flex items-center justify-center">
@@ -595,10 +597,14 @@ export default function LoginPage() {
               </div>
               {/* ─────────────────────────────────────────────────────────── */}
 
-              <button
+             <button
                 type="submit"
-                disabled={isLoading || !recaptchaToken}
-                className="w-full mt-4 text-sm font-bold shadow-md bg-[#c47c30]  text-white py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                disabled={isBtnDisabled}
+                className={`w-full mt-4 text-sm font-bold shadow-md py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-white ${
+                  isBtnDisabled 
+                    ? "bg-[#c47c30]/50 cursor-not-allowed" 
+                    : "bg-[#884e14] hover:bg-[#6b3d0f]"
+                }`}
               >
                 {isLoading ? (
                   <>
@@ -612,7 +618,7 @@ export default function LoginPage() {
                 )}
               </button>
 
-              <p className="text-center text-[12px] text-gray-400 mt-4">© {new Date().getFullYear()} Arya Tara CMS</p>
+              <p className="text-center text-[12px] text-gray-400 mt-4">© {new Date().getFullYear()} The Mount Curry Point POS</p>
             </form>
           </Form>
         </div>
